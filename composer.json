@@ -1,0 +1,20 @@
+{
+    "name": "pallo/lib-image",
+    "description": "Image processing library of the Pallo framework",
+    "license": "MIT",
+    "version": "0.1.0",
+    "authors": [
+        {
+            "name": "Joris Vandeweerd",
+            "email": "joris@statik.be"
+        }
+    ],
+    "require": {
+        "pallo/lib-system": ">=0.3.0"
+    }, 
+    "autoload": {
+        "psr-0": {
+            "pallo\\library\\image\\": ["src/", "test/src/"]
+        }
+    }
+}
