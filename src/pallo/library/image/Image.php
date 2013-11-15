@@ -12,12 +12,6 @@ use \Exception;
 class Image {
 
     /**
-     * Internal resource of this image
-     * @var resource
-     */
-    protected $resource;
-
-    /**
      * The width of this image
      * @var int
      */
@@ -30,33 +24,57 @@ class Image {
     protected $height;
 
     /**
+     * Flag to see if this image has alpha channel transparency
+     * @var boolean
+     */
+    protected $alpha;
+
+    /**
+     * Internal resource of this image
+     * @var resource
+     */
+    protected $resource;
+
+    /**
      * Array with the identifiers of the allocated colors
      * @var array
      */
-    private $colors;
+    protected $colors;
 
     /**
      * Construct an image object
-     * @param mixed null for a new image, another Image instance for a copy or a filename to read a file from filesystem
-     * @param int width width used to create a new image (default 100)
-     * @param int height height used to create a new image (default 100)
+     * @param integer $width Width used to create a new image (default 100)
+     * @param integer $height Height used to create a new image (default 100)
+     * @param boolean $alpha Flag to see if alpha channel is supported
+     * @param mixed $image null for a new image, another Image instance for
+     * a clone
      * @return null
      */
-    public function __construct($image = null, $width = 100, $height = 100) {
+    public function __construct($width = 100, $height = 100, $alpha = false, $image = null) {
         if (!extension_loaded('gd')) {
             throw new ImageException('Could not create a Image instance. Your PHP installation does not support graphic draw, please install the gd extension.');
         }
 
         if ($image === null) {
             $this->createResource($width, $height);
+            $this->setAlphaTransparency($alpha);
+
+            $color = $this->getTransparentColor();
+            if (!$color) {
+                $color = new Color(255, 255, 255);
+            }
+
+            imageFill($this->resource, 0, 0, $this->allocateColor($color));
 
             return;
         } elseif (is_resource($image)) {
             $this->resource = $image;
+            $this->alpha = $alpha;
 
             return;
         } elseif ($image instanceof self) {
             $this->createResource($image->width, $image->height);
+            $this->copyTransparency($image);
             $this->copyResource($image->resource, 0, 0, 0, 0, $this->width, $this->height, $this->width, $this->height);
 
             return;
@@ -152,7 +170,9 @@ class Image {
         $width = $dimension->getWidth();
         $height = $dimension->getHeight();
 
-        $result = new self(null, $width, $height);
+        $result = new self($width, $height);
+        $result->copyTransparency($this);
+
         if ($x + $width > $this->getWidth()) {
             throw new ImageException('X + width exceed the image width');
         }
@@ -174,7 +194,8 @@ class Image {
         $width = $dimension->getWidth();
         $height = $dimension->getHeight();
 
-        $result = new self(null, $width, $height);
+        $result = new self($width, $height, $this->alpha);
+        $result->copyTransparency($this);
 
         $result->copyResource($this->resource, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
 
@@ -191,7 +212,7 @@ class Image {
     public function rotate($degrees, $uncoveredColor = '#000000', $handleTransparancy = true) {
         $uncoveredColor = $this->allocateColor($uncoveredColor);
 
-        $result = new self($this);
+        $result = new self(null, null, null, $this);
 
         if ($handleTransparancy === true) {
             $ignoreTransparancy = 0;
@@ -467,28 +488,70 @@ class Image {
     }
 
     /**
-     * Create a new internal image resource with the given width and height
-     * @param int width width of the new image resource
-     * @param int height height of the new image resource
+     * Sets alpha channel transparency of this image
+     * @param boolean $alpha
      * @return null
      */
-    protected function createResource($width, $height) {
-        if (!is_integer($width) || $width <= 0) {
-            throw new ImageException('Invalid width provided ' . $width);
-        }
-        if (!is_integer($height) || $height <= 0) {
-            throw new ImageException('Invalid height provided ' . $height);
+    public function setAlphaTransparency($alpha = true) {
+        $this->alpha = $alpha;
+
+        imageAlphaBlending($this->resource, !$alpha);
+        imageSaveAlpha($this->resource, $alpha);
+    }
+
+    /**
+     * Gets the whether this image uses alpha channel transparency
+     * @return boolean
+     */
+    public function hasAlphaTransparency() {
+        return $this->alpha;
+    }
+
+    /**
+     * Sets the transparent color of this image
+     * @param pallo\library\image\Color $color
+     * @return null
+     */
+    public function setTransparentColor(Color $color) {
+        $color = $this->allocateColor($color);
+
+        imageColorTransparent($this->resource, $color);
+    }
+
+    /**
+     * Gets the transparent color of this image
+     * @return pallo\library\image\Color|null
+     */
+    public function getTransparentColor() {
+        if ($this->alpha) {
+            return new Color(0, 0, 0, 0);
         }
 
-        $this->resource = @imageCreateTrueColor($width, $height);
+        $colorIndex = imageColorTransparent($this->resource);
+        if ($colorIndex >= 0 && $colorIndex < imagecolorstotal($this->resource)) {
+            // image is transparent by color
+            $color = imageColorsForIndex($this->resource, $colorIndex);
 
-        if ($this->resource === false) {
-            $error = error_get_last();
-            throw new ImageException('Could not create the image resource: ' . $error['message']);
+            return new Color($color['red'], $color['green'], $color['blue']);
         }
 
-        $this->width = $width;
-        $this->height = $height;
+        return null;
+    }
+
+    /**
+     * Copies the transparency settings of the provided image
+     * @param Image $image Image to receive the transparency settings from
+     * @return null
+     */
+    public function copyTransparency(Image $image) {
+        if ($image->hasAlphaTransparency()) {
+            $this->setAlphaTransparency();
+        } else {
+            $color = $image->getTransparentColor();
+            if ($color) {
+                $this->setTransparentColor($color);
+            }
+        }
     }
 
     /**
@@ -511,8 +574,31 @@ class Image {
             }
         }
 
-        $transparent = imageColorAllocate($this->resource, 0, 0, 0);
-        imageColorTransparent($this->resource, $transparent);
+        $this->width = $width;
+        $this->height = $height;
+    }
+
+    /**
+     * Create a new internal image resource with the given width and height
+     * @param int width width of the new image resource
+     * @param int height height of the new image resource
+     * @return null
+     */
+    protected function createResource($width, $height) {
+        if (!is_integer($width) || $width <= 0) {
+            throw new ImageException('Invalid width provided ' . $width);
+        }
+        if (!is_integer($height) || $height <= 0) {
+            throw new ImageException('Invalid height provided ' . $height);
+        }
+
+        $this->resource = @imageCreateTrueColor($width, $height);
+
+        if ($this->resource === false) {
+            $error = error_get_last();
+
+            throw new ImageException('Could not create the image resource: ' . $error['message']);
+        }
 
         $this->width = $width;
         $this->height = $height;
@@ -534,7 +620,11 @@ class Image {
             return $this->colors[$code];
         }
 
-        $this->colors[$code] = imageColorAllocate($this->resource, $color->getRed(), $color->getGreen(), $color->getBlue());
+        if ($color->getAlpha()) {
+            $this->colors[$code] = imageColorAllocateAlpha($this->resource, $color->getRed(), $color->getGreen(), $color->getBlue(), $color->getAlpha());
+        } else {
+            $this->colors[$code] = imageColorAllocate($this->resource, $color->getRed(), $color->getGreen(), $color->getBlue());
+        }
 
         return $this->colors[$code];
     }

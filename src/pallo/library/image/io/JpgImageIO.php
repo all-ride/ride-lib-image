@@ -11,10 +11,12 @@ use pallo\library\system\file\File;
 class JpgImageIO extends AbstractImageIO {
 
     /**
-     * Array with the supported extensions of this ImageIO
-     * @var array
+     * Gets the extensions of the image format
+     * @return array
      */
-    private $supportedExtensions = array('jpg', 'jpeg');
+    public function getExtensions() {
+        return array('jpg', 'jpeg');
+    }
 
     /**
      * Read a jpg image from file
@@ -22,7 +24,7 @@ class JpgImageIO extends AbstractImageIO {
      * @return resource internal PHP image resource of the file
      */
     public function read(File $file) {
-        $this->checkIfReadIsPossible($file, $this->supportedExtensions);
+        $this->checkIfReadIsPossible($file);
 
         $image = imageCreateFromJpeg($file->getAbsolutePath());
         if ($image === false) {
@@ -38,7 +40,7 @@ class JpgImageIO extends AbstractImageIO {
      * @param resource internal PHP image resource
      */
     public function write(File $file, $resource) {
-        $this->checkIfWriteIsPossible($file, $resource, $this->supportedExtensions);
+        $this->checkIfWriteIsPossible($file, $resource);
 
         imageJpeg($resource, $file->getAbsolutePath());
     }
