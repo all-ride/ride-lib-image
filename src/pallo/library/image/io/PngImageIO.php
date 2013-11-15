@@ -11,17 +11,46 @@ use pallo\library\system\file\File;
 class PngImageIO extends AbstractImageIO {
 
     /**
+     * Gets the extensions of the image format
+     * @return array
+     */
+    public function getExtensions() {
+        return array('png');
+    }
+
+    /**
+     * Checks if transparency is supported by the image format
+     * @return boolean
+     */
+    public function supportsTransparancy() {
+        return true;
+    }
+
+    /**
+     * Checks if alpha channel is supported by the image format
+     * @return boolean
+     */
+    public function supportsAlphaChannel() {
+        return true;
+    }
+
+    /**
      * Read a png image from file
      * @param File file of the image
      * @return resource internal PHP image resource of the file
      */
     public function read(File $file) {
-        $this->checkIfReadIsPossible($file, 'png');
+        $this->checkIfReadIsPossible($file);
 
+        // read image resource
         $image = imageCreateFromPng($file->getAbsolutePath());
         if ($image === false) {
             throw new ImageException($file->getPath() . ' is not a valid PNG image');
         }
+
+        // handle transparency
+        imageAlphaBlending($image, false);
+        imageSaveAlpha($image, true);
 
         return $image;
     }
@@ -32,7 +61,7 @@ class PngImageIO extends AbstractImageIO {
      * @param resource internal PHP image resource
      */
     public function write(File $file, $resource) {
-        $this->checkIfWriteIsPossible($file, $resource, 'png');
+        $this->checkIfWriteIsPossible($file, $resource);
 
         imagePng($resource, $file->getAbsolutePath());
     }

@@ -11,44 +11,67 @@ use pallo\library\system\file\File;
 abstract class AbstractImageIO implements ImageIO {
 
     /**
-     * Check if the write action is valid and supported by this ImageIO.
-     * @param File file to check if read is possible
-     * @param mixed supportedExtensions string of an extension or array with extension strings
+     * Checks if transparency is supported by the image format
+     * @return boolean
      */
-    protected function checkIfReadIsPossible(File $file, $supportedExtensions) {
-        $this->checkIfFileIsSupported($file, $supportedExtensions);
+    public function supportsTransparancy() {
+        return false;
+    }
+
+    /**
+     * Checks if alpha channel is supported by the image format
+     * @return boolean
+    */
+    public function supportsAlphaChannel() {
+        return false;
+    }
+
+    /**
+     * Check if the read action is valid and supported by this ImageIO.
+     * @param pallo\library\system\file\File $file File to check
+     * @return null
+     * @throws pallo\library\image\exception\ImageException when the image is
+     * not readable
+     */
+    protected function checkIfReadIsPossible(File $file) {
+        $this->checkIfFileIsSupported($file);
 
         if (!$file->isReadable()) {
-            throw new ImageException('Could not read ' . $file->getPath());
+            throw new ImageException('Could not read ' . $file . ': file not readable');
         }
     }
 
     /**
      * Check if the write action is valid and supported by this ImageIO.
-     * @param File file to check if write is possible
-     * @param resource internal image resource to write
-     * @param mixed supportedExtensions string of an extension or array with extension strings
+     * @param pallo\library\system\file\File $file File to check
+     * @param resource $resource Internal image resource to write
+     * @return null
+     * @throws pallo\library\image\exception\ImageException when the image is
+     * not writable
      */
-    protected function checkIfWriteIsPossible(File $file, $resource, $supportedExtensions) {
-        $this->checkIfFileIsSupported($file, $supportedExtensions);
+    protected function checkIfWriteIsPossible(File $file, $resource) {
+        $this->checkIfFileIsSupported($file);
 
         if (!$file->isWritable()) {
-            throw new ImageException('Could not write ' . $file->getPath());
+            throw new ImageException('Could not write ' . $file . ': file not writable');
         }
 
         if ($resource == null) {
-            throw new ImageException('Resource is null');
+            throw new ImageException('Could not write ' . $file . ': image resource is null');
         }
     }
 
     /**
-     * Check if a file is supported by this ImageIO. This check is based on the extension.
-     * @param File file to check if it is supported
-     * @param mixed supportedExtensions string of an extension or array with extension strings
+     * Check if a file is supported by this ImageIO. This check is based on the
+     * extension of the file.
+     * @param pallo\library\system\file\File $file File to check
+     * @return boolean
+     * @throws pallo\library\image\exception\ImageException when the image is
+     * not supported
      */
-    protected function checkIfFileIsSupported(File $file, $supportedExtensions) {
-        if (!$file->hasExtension($supportedExtensions)) {
-            throw new ImageException($file->getPath() . ' is not supported');
+    protected function checkIfFileIsSupported(File $file) {
+        if (!$file->hasExtension($this->getExtensions())) {
+            throw new ImageException('Could not process ' . $file . ': format not supported');
         }
 
         return true;

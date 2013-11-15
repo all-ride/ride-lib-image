@@ -26,16 +26,23 @@ class Color {
     private $blue;
 
     /**
+     * Value for aplha channel
+     * @var integer
+     */
+    private $alpha;
+
+    /**
      * Constructs a new color
      * @param integer|string $red
      * @param integer|string $green
      * @param integer|string $blue
      * @return null
      */
-    public function __construct($red, $green, $blue) {
+    public function __construct($red, $green, $blue, $alpha = 0) {
         $this->red = $red;
         $this->green = $green;
         $this->blue = $blue;
+        $this->alpha = $alpha;
     }
 
     /**
@@ -43,7 +50,11 @@ class Color {
      * @return string
      */
     public function __toString() {
-        return 'RGB(' . $this->red . ', ' . $this->green . ', ' . $this->blue . ')';
+        if (!$this->alpha) {
+            return 'RGB(' . $this->red . ', ' . $this->green . ', ' . $this->blue . ')';
+        } else {
+            return 'RGBA(' . $this->red . ', ' . $this->green . ', ' . $this->blue . ', ' . $this->alpha . ')';
+        }
     }
 
     /**
@@ -71,6 +82,14 @@ class Color {
     }
 
     /**
+     * Gets the alpha channel value
+     * @return integer
+     */
+    public function getAlpha() {
+        return $this->alpha;
+    }
+
+    /**
      * Gets this color in HTML format
      * @return string
      */
@@ -80,15 +99,6 @@ class Color {
         $blue = str_pad(dechex($this->blue), 2, '0', STR_PAD_LEFT);
 
         return '#' . $red . $green . $blue;
-    }
-
-    /**
-     * Gets whether the provided color equals this color
-     * @param Color $color Color to compare with
-     * @return boolean True if the color is the same, false otherwise
-     */
-    public function equals(Color $color) {
-        return $this->red == $color->red && $this->green == $color->green && $this->blue == $color->blue;
     }
 
     /**
