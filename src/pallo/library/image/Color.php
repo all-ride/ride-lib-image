@@ -90,6 +90,31 @@ class Color {
     }
 
     /**
+     * Checks if this color is dark
+     * @return boolean True when the color is dark, false for a light color
+     */
+    public function isDark() {
+        $brightness = (($this->red * 299) + ($this->green * 587) + ($this->blue * 114)) / 1000;
+
+        return $brightness < 125;
+    }
+
+    /**
+     * Adjusts the luminance (visually perceived brightness) of the color
+     * @param float $factor Value between -1 and 1
+     * @return Color New color instance with the luminance adjusted
+     */
+    public function luminate($factor) {
+        $color = clone $this;
+
+        $color->red = round(min(max(0, $color->red + ($color->red * $factor)), 255));
+        $color->green = round(min(max(0, $color->green + ($color->green * $factor)), 255));
+        $color->blue = round(min(max(0, $color->blue + ($color->blue * $factor)), 255));
+
+        return $color;
+    }
+
+    /**
      * Gets this color in HTML format
      * @return string
      */
