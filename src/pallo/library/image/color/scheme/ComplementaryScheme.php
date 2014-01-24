@@ -41,7 +41,6 @@ class ComplementaryScheme implements Scheme {
             return $colors;
         }
 
-
         $calculateComplementShade = false;
         $factor = 0.5 / $number;
 
