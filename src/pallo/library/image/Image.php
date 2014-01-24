@@ -2,6 +2,8 @@
 
 namespace pallo\library\image;
 
+use pallo\library\image\color\Color;
+use pallo\library\image\color\RgbColor;
 use pallo\library\image\exception\ImageException;
 
 use \Exception;
@@ -61,7 +63,7 @@ class Image {
 
             $color = $this->getTransparentColor();
             if (!$color) {
-                $color = new Color(255, 255, 255);
+                $color = new RgbColor(255, 255, 255);
             }
 
             imageFill($this->resource, 0, 0, $this->allocateColor($color));
@@ -229,7 +231,7 @@ class Image {
      * Draws a line on the image
      * @param Point $p1 Start point of the line
      * @param Point $p2 End point of the line
-     * @param Color $color
+     * @param pallo\library\image\color\Color $color
      * @return null
      */
     public function drawLine(Point $p1, Point $p2, Color $color) {
@@ -267,7 +269,7 @@ class Image {
      * Draws a rectangle on the image
      * @param Point $leftTop Point of the upper left corner
      * @param Dimension $dimension Dimension of the rectangle
-     * @param Color $color
+     * @param pallo\library\image\color\Color $color
      * @param integer $width
      * @return null
      */
@@ -293,7 +295,7 @@ class Image {
      * Fills a rectangle on the image with the provided color
      * @param Point $leftTop
      * @param Dimension $dimension
-     * @param Color $color
+     * @param pallo\library\image\color\Color $color
      * @return null
      */
     public function fillRectangle(Point $leftTop, Dimension $dimension, Color $color) {
@@ -312,7 +314,7 @@ class Image {
      * @param Point $leftTop Point of the upper left corner
      * @param Dimension $dimension Dimension of the rectangle
      * @param integer $cornerSize The number of pixels which should be round of
-     * @param Color $color
+     * @param pallo\library\image\color\Color $color
      * @param integer $width
      * @return null
      */
@@ -356,7 +358,7 @@ class Image {
      * @param Point $leftTop Point of the upper left corner
      * @param Dimension $dimension Dimension of the rectangle
      * @param integer $cornerSize The number of pixels which should be round of
-     * @param Color $color
+     * @param pallo\library\image\color\Color $color
      * @param integer $width
      * @return null
      */
@@ -400,7 +402,7 @@ class Image {
      * @param Dimension $dimension Dimension of the circle
      * @param integer $angleStart 0° is at 3 o'clock and the arc is drawn clockwise
      * @param integer $angleStop
-     * @param Color $color
+     * @param pallo\library\image\color\Color $color
      * @return null
      */
     public function drawArc(Point $center, Dimension $dimension, $angleStart, $angleStop, Color $color) {
@@ -420,7 +422,7 @@ class Image {
      * @param Dimension $dimension Dimension of the circle
      * @param integer $angleStart 0° is at 3 o'clock and the arc is drawn clockwise
      * @param integer $angleStop
-     * @param Color $color
+     * @param pallo\library\image\color\Color $color
      * @return null
      */
     public function fillArc(Point $center, Dimension $dimension, $angleStart, $angleStop, Color $color, $type = null) {
@@ -442,7 +444,7 @@ class Image {
      * Draws a ellipse on the image
      * @param Point $center Point of the ellipse center
      * @param Dimension $dimension Dimension of the ellipse
-     * @param Color $color
+     * @param pallo\library\image\color\Color $color
      * @return null
      */
     public function drawEllipse(Point $center, Dimension $dimension, Color $color) {
@@ -460,7 +462,7 @@ class Image {
      * Fills a ellipse on the image
      * @param Point $center Point of the ellipse center
      * @param Dimension $dimension Dimension of the ellipse
-     * @param Color $color
+     * @param pallo\library\image\color\Color $color
      * @return null
      */
     public function fillEllipse(Point $center, Dimension $dimension, Color $color) {
@@ -477,7 +479,7 @@ class Image {
     /**
      * Draws text on the image
      * @param Point $leftTop Point of the upper left corner
-     * @param Color $color
+     * @param pallo\library\image\color\Color $color
      * @param string $text
      * @return null
      */
@@ -509,7 +511,7 @@ class Image {
 
     /**
      * Sets the transparent color of this image
-     * @param pallo\library\image\Color $color
+     * @param pallo\library\image\color\Color $color
      * @return null
      */
     public function setTransparentColor(Color $color) {
@@ -520,11 +522,11 @@ class Image {
 
     /**
      * Gets the transparent color of this image
-     * @return pallo\library\image\Color|null
+     * @return pallo\library\image\color\Color|null
      */
     public function getTransparentColor() {
         if ($this->alpha) {
-            return new Color(0, 0, 0, 0);
+            return new RgbColor(0, 0, 0, 0);
         }
 
         $colorIndex = imageColorTransparent($this->resource);
@@ -532,7 +534,7 @@ class Image {
             // image is transparent by color
             $color = imageColorsForIndex($this->resource, $colorIndex);
 
-            return new Color($color['red'], $color['green'], $color['blue']);
+            return new RgbColor($color['red'], $color['green'], $color['blue']);
         }
 
         return null;
@@ -606,7 +608,7 @@ class Image {
 
     /**
      * Allocates the color in the image
-     * @param Color $color Color definition
+     * @param pallo\library\image\color\Color $color Color definition
      * @return integer identifier of the color
      */
     protected function allocateColor(Color $color) {
@@ -620,11 +622,7 @@ class Image {
             return $this->colors[$code];
         }
 
-        if ($color->getAlpha()) {
-            $this->colors[$code] = imageColorAllocateAlpha($this->resource, $color->getRed(), $color->getGreen(), $color->getBlue(), $color->getAlpha());
-        } else {
-            $this->colors[$code] = imageColorAllocate($this->resource, $color->getRed(), $color->getGreen(), $color->getBlue());
-        }
+        $this->colors[$code] = $color->allocate($this->resource);
 
         return $this->colors[$code];
     }
