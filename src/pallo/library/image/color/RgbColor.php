@@ -1,41 +1,44 @@
 <?php
 
-namespace pallo\library\image;
+namespace pallo\library\image\color;
+
+use pallo\library\image\exception\ImageException;
 
 /**
- * Data container for a color
+ * RGB color implementation
  */
-class Color {
+class RgbColor implements HtmlColor {
 
     /**
      * Value for red
      * @var integer
      */
-    private $red;
+    protected $red;
 
     /**
      * Value for green
      * @var integer
      */
-    private $green;
+    protected $green;
 
     /**
      * Value for blue
      * @var integer
      */
-    private $blue;
+    protected $blue;
 
     /**
      * Value for aplha channel
      * @var integer
      */
-    private $alpha;
+    protected $alpha;
 
     /**
      * Constructs a new color
-     * @param integer|string $red
-     * @param integer|string $green
-     * @param integer|string $blue
+     * @param integer $red Red value between 0 and 255
+     * @param integer $green Green value between 0 and 255
+     * @param integer $blue Blue value between 0 and 255
+     * @param integer $alpha Alpha value between 0 and 127
      * @return null
      */
     public function __construct($red, $green, $blue, $alpha = 0) {
@@ -58,8 +61,29 @@ class Color {
     }
 
     /**
+     * Allocates the color to the provided image resource
+     * @param resource $resource Image resource
+     * @return integer Color identifier
+     * @throws pallo\library\image\exception\ImageException when the color
+     * could not be allocated
+     */
+    public function allocate($resource) {
+        if ($this->alpha) {
+            $id = imageColorAllocateAlpha($resource, $this->red, $this->green, $this->blue, $this->alpha);
+        } else {
+            $id = imageColorAllocate($resource, $this->red, $this->green, $this->blue);
+        }
+
+        if ($id === false) {
+            throw new ImageException('Could not allocate color ' . $this);
+        }
+
+        return $id;
+    }
+
+    /**
      * Gets the red value
-     * @return integer
+     * @return integer Value between 0 and 255
      */
     public function getRed() {
         return $this->red;
@@ -67,7 +91,7 @@ class Color {
 
     /**
      * Gets the green value
-     * @return integer
+     * @return integer Value between 0 and 255
      */
     public function getGreen() {
         return $this->green;
@@ -75,7 +99,7 @@ class Color {
 
     /**
      * Gets the blue value
-     * @return integer
+     * @return integer Value between 0 and 255
      */
     public function getBlue() {
         return $this->blue;
@@ -83,10 +107,18 @@ class Color {
 
     /**
      * Gets the alpha channel value
-     * @return integer
+     * @return integer Value between 0 and 127
      */
     public function getAlpha() {
         return $this->alpha;
+    }
+
+    /**
+     * Gets the brightness value of this color
+     * @return integer Value between 0 and 500
+     */
+    public function getBrightness() {
+        return (($this->red * 299) + ($this->green * 587) + ($this->blue * 114)) / 1000;
     }
 
     /**
@@ -94,9 +126,7 @@ class Color {
      * @return boolean True when the color is dark, false for a light color
      */
     public function isDark() {
-        $brightness = (($this->red * 299) + ($this->green * 587) + ($this->blue * 114)) / 1000;
-
-        return $brightness < 125;
+        return $this->getBrightness() < 125;
     }
 
     /**
@@ -112,6 +142,43 @@ class Color {
         $color->blue = round(min(max(0, $color->blue + ($color->blue * $factor)), 255));
 
         return $color;
+    }
+
+    /**
+     * Gets this color in a HSL implementation
+     * @return HslColor
+     */
+    public function getHslColor() {
+        $red = $this->red / 255;
+        $green = $this->green / 255;
+        $blue = $this->blue / 255;
+
+        $max = max($red, $green, $blue);
+        $min = min($red, $green, $blue);
+
+        $hue;
+        $saturation;
+        $lightness = ($max + $min) / 2;
+        $d = $max - $min;
+
+        if ($d == 0) {
+            return new HslColor(0, 0, $lightness, $this->alpha);
+        }
+
+        $saturation = $d / ( 1 - abs( 2 * $lightness - 1 ) );
+
+        if ($max === $red) {
+    	    $hue = 60 * fmod((($green - $blue) / $d), 6);
+    	    if ($blue > $green) {
+    	        $hue += 360;
+    	    }
+        } elseif ($max === $green) {
+    	    $hue = 60 * (($blue - $red) / $d + 2);
+        } elseif ($max === $blue) {
+    	    $hue = 60 * (($red - $green) / $d + 4);
+        }
+
+        return new HslColor(round($hue / 360, 2), round($saturation, 2), round($lightness, 2), $this->alpha);
     }
 
     /**
