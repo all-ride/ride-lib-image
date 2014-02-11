@@ -11,6 +11,12 @@ use pallo\library\system\file\File;
 interface ImageFactory {
 
     /**
+     * Gets the supported extensions
+     * @return array Array with the extension as key and value
+     */
+    public function getExtensions();
+
+    /**
      * Reads an image from file
      * @param pallo\library\system\file\File $file Path to read the image from
      * @return Image
