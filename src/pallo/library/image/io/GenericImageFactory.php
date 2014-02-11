@@ -18,6 +18,20 @@ class GenericImageFactory implements ImageFactory {
     protected $extensions = array();
 
     /**
+     * Gets the supported extensions
+     * @return array Array with the extension as key and value
+     */
+    public function getExtensions() {
+        $extensions = array();
+
+        foreach ($this->extensions as $extension => $imageIO) {
+            $extensions[$extension] = $extension;
+        }
+
+        return $extensions;
+    }
+
+    /**
      * Adds an I/O implementation for a image format
      * @param pallo\library\image\io\ImageIO $imageIO
      * @return null
@@ -27,6 +41,26 @@ class GenericImageFactory implements ImageFactory {
         foreach ($extensions as $extension) {
             $this->extensions[$extension] = $imageIO;
         }
+    }
+
+    /**
+     * Removes an I/O implementation of a image format
+     * @param pallo\library\image\io\ImageIO $imageIO
+     * @return boolean True when the extension was found and removed, false
+     * otherwise
+     */
+    public function removeImageIO(ImageIO $imageIO) {
+        $result = false;
+
+        foreach ($this->extensions as $extension => $extensionImageIO) {
+            if ($extensionImageIO === $imageIO) {
+                unset($this->extensions[$extension]);
+
+                $result = true;
+            }
+        }
+
+        return $result;
     }
 
     /**
