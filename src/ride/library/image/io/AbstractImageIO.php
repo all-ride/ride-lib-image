@@ -28,9 +28,9 @@ abstract class AbstractImageIO implements ImageIO {
 
     /**
      * Check if the read action is valid and supported by this ImageIO.
-     * @param ride\library\system\file\File $file File to check
+     * @param \ride\library\system\file\File $file File to check
      * @return null
-     * @throws ride\library\image\exception\ImageException when the image is
+     * @throws \ride\library\image\exception\ImageException when the image is
      * not readable
      */
     protected function checkIfReadIsPossible(File $file) {
@@ -43,10 +43,10 @@ abstract class AbstractImageIO implements ImageIO {
 
     /**
      * Check if the write action is valid and supported by this ImageIO.
-     * @param ride\library\system\file\File $file File to check
+     * @param \ride\library\system\file\File $file File to check
      * @param resource $resource Internal image resource to write
      * @return null
-     * @throws ride\library\image\exception\ImageException when the image is
+     * @throws \ride\library\image\exception\ImageException when the image is
      * not writable
      */
     protected function checkIfWriteIsPossible(File $file, $resource) {
@@ -64,9 +64,9 @@ abstract class AbstractImageIO implements ImageIO {
     /**
      * Check if a file is supported by this ImageIO. This check is based on the
      * extension of the file.
-     * @param ride\library\system\file\File $file File to check
+     * @param \ride\library\system\file\File $file File to check
      * @return boolean
-     * @throws ride\library\image\exception\ImageException when the image is
+     * @throws \ride\library\image\exception\ImageException when the image is
      * not supported
      */
     protected function checkIfFileIsSupported(File $file) {

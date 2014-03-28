@@ -33,7 +33,7 @@ class GenericImageFactory implements ImageFactory {
 
     /**
      * Adds an I/O implementation for a image format
-     * @param ride\library\image\io\ImageIO $imageIO
+     * @param \ride\library\image\io\ImageIO $imageIO
      * @return null
      */
     public function addImageIO(ImageIO $imageIO) {
@@ -45,7 +45,7 @@ class GenericImageFactory implements ImageFactory {
 
     /**
      * Removes an I/O implementation of a image format
-     * @param ride\library\image\io\ImageIO $imageIO
+     * @param \ride\library\image\io\ImageIO $imageIO
      * @return boolean True when the extension was found and removed, false
      * otherwise
      */
@@ -65,7 +65,7 @@ class GenericImageFactory implements ImageFactory {
 
     /**
      * Reads an image from file
-     * @param ride\library\system\file\File $file Path to read the image from
+     * @param \ride\library\system\file\File $file Path to read the image from
      * @return Image
      */
     public function read(File $file) {
@@ -81,7 +81,7 @@ class GenericImageFactory implements ImageFactory {
 
     /**
      * Writes an image to file
-     * @param ride\library\system\file\File $file Path to write the image to
+     * @param \ride\library\system\file\File $file Path to write the image to
      * @param Image $image Image to write
      * @return null
      */

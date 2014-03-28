@@ -18,14 +18,14 @@ interface ImageFactory {
 
     /**
      * Reads an image from file
-     * @param ride\library\system\file\File $file Path to read the image from
+     * @param \ride\library\system\file\File $file Path to read the image from
      * @return Image
      */
     public function read(File $file);
 
     /**
      * Writes an image to file
-     * @param ride\library\system\file\File $file Path to write the image to
+     * @param \ride\library\system\file\File $file Path to write the image to
      * @param Image $image Image to write
      * @return null
      */

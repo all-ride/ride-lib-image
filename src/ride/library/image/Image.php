@@ -231,7 +231,7 @@ class Image {
      * Draws a line on the image
      * @param Point $p1 Start point of the line
      * @param Point $p2 End point of the line
-     * @param ride\library\image\color\Color $color
+     * @param \ride\library\image\color\Color $color
      * @return null
      */
     public function drawLine(Point $p1, Point $p2, Color $color) {
@@ -269,7 +269,7 @@ class Image {
      * Draws a rectangle on the image
      * @param Point $leftTop Point of the upper left corner
      * @param Dimension $dimension Dimension of the rectangle
-     * @param ride\library\image\color\Color $color
+     * @param \ride\library\image\color\Color $color
      * @param integer $width
      * @return null
      */
@@ -295,7 +295,7 @@ class Image {
      * Fills a rectangle on the image with the provided color
      * @param Point $leftTop
      * @param Dimension $dimension
-     * @param ride\library\image\color\Color $color
+     * @param \ride\library\image\color\Color $color
      * @return null
      */
     public function fillRectangle(Point $leftTop, Dimension $dimension, Color $color) {
@@ -314,7 +314,7 @@ class Image {
      * @param Point $leftTop Point of the upper left corner
      * @param Dimension $dimension Dimension of the rectangle
      * @param integer $cornerSize The number of pixels which should be round of
-     * @param ride\library\image\color\Color $color
+     * @param \ride\library\image\color\Color $color
      * @param integer $width
      * @return null
      */
@@ -358,7 +358,7 @@ class Image {
      * @param Point $leftTop Point of the upper left corner
      * @param Dimension $dimension Dimension of the rectangle
      * @param integer $cornerSize The number of pixels which should be round of
-     * @param ride\library\image\color\Color $color
+     * @param \ride\library\image\color\Color $color
      * @param integer $width
      * @return null
      */
@@ -402,7 +402,7 @@ class Image {
      * @param Dimension $dimension Dimension of the circle
      * @param integer $angleStart 0° is at 3 o'clock and the arc is drawn clockwise
      * @param integer $angleStop
-     * @param ride\library\image\color\Color $color
+     * @param \ride\library\image\color\Color $color
      * @return null
      */
     public function drawArc(Point $center, Dimension $dimension, $angleStart, $angleStop, Color $color) {
@@ -422,7 +422,7 @@ class Image {
      * @param Dimension $dimension Dimension of the circle
      * @param integer $angleStart 0° is at 3 o'clock and the arc is drawn clockwise
      * @param integer $angleStop
-     * @param ride\library\image\color\Color $color
+     * @param \ride\library\image\color\Color $color
      * @return null
      */
     public function fillArc(Point $center, Dimension $dimension, $angleStart, $angleStop, Color $color, $type = null) {
@@ -444,7 +444,7 @@ class Image {
      * Draws a ellipse on the image
      * @param Point $center Point of the ellipse center
      * @param Dimension $dimension Dimension of the ellipse
-     * @param ride\library\image\color\Color $color
+     * @param \ride\library\image\color\Color $color
      * @return null
      */
     public function drawEllipse(Point $center, Dimension $dimension, Color $color) {
@@ -462,7 +462,7 @@ class Image {
      * Fills a ellipse on the image
      * @param Point $center Point of the ellipse center
      * @param Dimension $dimension Dimension of the ellipse
-     * @param ride\library\image\color\Color $color
+     * @param \ride\library\image\color\Color $color
      * @return null
      */
     public function fillEllipse(Point $center, Dimension $dimension, Color $color) {
@@ -479,7 +479,7 @@ class Image {
     /**
      * Draws text on the image
      * @param Point $leftTop Point of the upper left corner
-     * @param ride\library\image\color\Color $color
+     * @param \ride\library\image\color\Color $color
      * @param string $text
      * @return null
      */
@@ -511,7 +511,7 @@ class Image {
 
     /**
      * Sets the transparent color of this image
-     * @param ride\library\image\color\Color $color
+     * @param \ride\library\image\color\Color $color
      * @return null
      */
     public function setTransparentColor(Color $color) {
@@ -522,7 +522,7 @@ class Image {
 
     /**
      * Gets the transparent color of this image
-     * @return ride\library\image\color\Color|null
+     * @return \ride\library\image\color\Color|null
      */
     public function getTransparentColor() {
         if ($this->alpha) {
@@ -608,7 +608,7 @@ class Image {
 
     /**
      * Allocates the color in the image
-     * @param ride\library\image\color\Color $color Color definition
+     * @param \ride\library\image\color\Color $color Color definition
      * @return integer identifier of the color
      */
     protected function allocateColor(Color $color) {

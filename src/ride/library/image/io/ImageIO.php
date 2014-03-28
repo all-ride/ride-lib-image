@@ -29,14 +29,14 @@ interface ImageIO {
 
     /**
      * Reads an image from file
-     * @param ride\library\system\file\File $file File of the image
+     * @param \ride\library\system\file\File $file File of the image
      * @return resource Internal PHP image resource
      */
     public function read(File $file);
 
     /**
      * Writes an image to file
-     * @param ride\library\system\file\File $file File of the image
+     * @param \ride\library\system\file\File $file File of the image
      * @param resource $resource Internal PHP image resource
      * @return null
      */
