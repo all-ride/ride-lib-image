@@ -11,13 +11,13 @@ class Dimension {
      * Width of the dimension
      * @var integer
      */
-    private $width;
+    protected $width;
 
     /**
      * Height of the dimension
      * @var integer
      */
-    private $height;
+    protected $height;
 
     /**
      * Constructs a new dimension
@@ -26,8 +26,8 @@ class Dimension {
      * @return null
      */
     public function __construct($width, $height) {
-        $this->width = (integer) $width;
-        $this->height = (integer) $height;
+        $this->setWidth($width);
+        $this->setHeight($height);
     }
 
     /**
@@ -39,6 +39,19 @@ class Dimension {
     }
 
     /**
+     * Sets the width of this dimension
+     * @param integer $width
+     * @return null
+     */
+    public function setWidth($width) {
+        if (!is_numeric($width)) {
+            throw new ImageException('Could not set width of dimension: not a numeric value provided');
+        }
+
+        $this->width = $width;
+    }
+
+    /**
      * Gets the width of the dimension
      * @return integer
      */
@@ -47,20 +60,24 @@ class Dimension {
     }
 
     /**
+     * Sets the width of this dimension
+     * @param integer $width
+     * @return null
+     */
+    public function setHeight($height) {
+        if (!is_numeric($height)) {
+            throw new ImageException('Could not set height of dimension: not a numeric value provided');
+        }
+
+        $this->height = $height;
+    }
+
+    /**
      * Gets the height of the dimension
      * @return integer
      */
     public function getHeight() {
         return $this->height;
-    }
-
-    /**
-     * Gets whether the provided dimension equals this dimension
-     * @param Dimension $dimension Dimension to compare with
-     * @return boolean True if the dimension is the same, false otherwise
-     */
-    public function equals(Dimension $dimension) {
-        return $this->width == $point->width && $this->height == $point->height;
     }
 
 }
