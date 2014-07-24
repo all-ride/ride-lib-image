@@ -228,6 +228,18 @@ class Image {
     }
 
     /**
+     * Draws a point on the image
+     * @param Point $p Point coordinates
+     * @param ride\library\image\color\Color $color
+     * @return null
+     */
+    public function drawPoint(Point $p, Color $color) {
+        $color = $this->allocateColor($color);
+
+        imageSetPixel($this->resource, $p->getX(), $p->getY(), $color);
+    }
+
+    /**
      * Draws a line on the image
      * @param Point $p1 Start point of the line
      * @param Point $p2 End point of the line
@@ -587,10 +599,10 @@ class Image {
      * @return null
      */
     protected function createResource($width, $height) {
-        if (!is_integer($width) || $width <= 0) {
+        if (!is_numeric($width) || $width <= 0) {
             throw new ImageException('Invalid width provided ' . $width);
         }
-        if (!is_integer($height) || $height <= 0) {
+        if (!is_numeric($height) || $height <= 0) {
             throw new ImageException('Invalid height provided ' . $height);
         }
 
