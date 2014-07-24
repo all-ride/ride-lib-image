@@ -66,10 +66,14 @@ class GenericImageFactory implements ImageFactory {
     /**
      * Reads an image from file
      * @param ride\library\system\file\File $file Path to read the image from
+     * @param string $extension Extension to use
      * @return Image
      */
-    public function read(File $file) {
-        $extension = $file->getExtension();
+    public function read(File $file, $extension = null) {
+        if (!$extension) {
+            $extension = $file->getExtension();
+        }
+
         if (!isset($this->extensions[$extension])) {
             throw new ImageException('Could not read ' . $file . ': ' . $extension . ' is not supported');
         }
@@ -83,10 +87,14 @@ class GenericImageFactory implements ImageFactory {
      * Writes an image to file
      * @param ride\library\system\file\File $file Path to write the image to
      * @param Image $image Image to write
+     * @param string $extension Extension to use
      * @return null
      */
-    public function write(File $file, Image $image) {
-        $extension = $file->getExtension();
+    public function write(File $file, Image $image, $extension = null) {
+        if (!$extension) {
+            $extension = $file->getExtension();
+        }
+
         if (!isset($this->extensions[$extension])) {
             throw new ImageException('Could not write ' . $file . ': ' . $extension . ' is not supported');
         }

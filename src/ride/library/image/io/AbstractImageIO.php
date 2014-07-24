@@ -70,7 +70,7 @@ abstract class AbstractImageIO implements ImageIO {
      * not supported
      */
     protected function checkIfFileIsSupported(File $file) {
-        if (!$file->hasExtension($this->getExtensions())) {
+        if ($file->getExtension() && !$file->hasExtension($this->getExtensions())) {
             throw new ImageException('Could not process ' . $file . ': format not supported');
         }
 
