@@ -54,27 +54,6 @@ class RgbColor extends AbstractColor {
         }
     }
 
-    // /**
-    //  * Allocates the color to the provided image resource
-    //  * @param resource $resource Image resource
-    //  * @return integer Color identifier
-    //  * @throws ride\library\image\exception\ImageException when the color
-    //  * could not be allocated
-    //  */
-    // public function allocate($resource) {
-    //     if ($this->alpha) {
-    //         $id = imageColorAllocateAlpha($resource, $this->red, $this->green, $this->blue, $this->alpha);
-    //     } else {
-    //         $id = imageColorAllocate($resource, $this->red, $this->green, $this->blue);
-    //     }
-
-    //     if ($id === false) {
-    //         throw new ImageException('Could not allocate color ' . $this);
-    //     }
-
-    //     return $id;
-    // }
-
     /**
      * Sets the red value
      * @param integer $red Value between 0 and 255

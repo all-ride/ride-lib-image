@@ -54,29 +54,6 @@ class HslColor extends AbstractColor {
         }
     }
 
-    // /**
-    //  * Allocates the color to the provided image resource
-    //  * @param resource $resource Image resource
-    //  * @return integer Color identifier
-    //  * @throws ride\library\image\exception\ImageException when the color
-    //  * could not be allocated
-    //  */
-    // public function allocate($resource) {
-    //     $color = $this->getRgbColor();
-
-    //     if ($color->getAlpha()) {
-    //         $id = imageColorAllocateAlpha($resource, $color->getRed(), $color->getGreen(), $color->getBlue(), $color->getAlpha());
-    //     } else {
-    //         $id = imageColorAllocate($resource, $color->getRed(), $color->getGreen(), $color->getBlue());
-    //     }
-
-    //     if ($id === false) {
-    //         throw new ImageException('Could not allocate color ' . $this);
-    //     }
-
-    //     return $id;
-    // }
-
     /**
      * Sets the hue value
      * @param float $hue Value between 0 and 1
