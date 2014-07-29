@@ -1,11 +1,13 @@
 <?php
 
-namespace ride\library\image;
+namespace ride\library\image\point;
+
+use ride\library\image\exception\ImageException;
 
 /**
  * Data container for a point
  */
-class Point {
+class GenericPoint implements Point {
 
     /**
      * Value on the X-axis

@@ -8,13 +8,18 @@ namespace ride\library\image;
 interface ImageUrlGenerator {
 
     /**
+     * Gets the cache directory of this generator
+     * @return \ride\library\system\file\File
+     */
+    public function getCacheDirectory();
+
+    /**
      * Generates a URL for the provided image.
-     * @param string $image Path of the image
-     * @param string $thumbnailer Name of the thumbnailer to use
-     * @param int $width Width for the thumbnailer
-     * @param int $height Height for the thumbnailer
+     * @param string|\ride\library\system\file\File $image Path or File instance to the image
+     * @param string $transformation Name of the transformation to use
+     * @param array $options Options for the transformation
      * @return null
      */
-    public function generateUrl($image, $thumbnailer = null, $width = 0, $height = 0);
+    public function generateUrl($image, $transformation = null, array $options = null);
 
 }

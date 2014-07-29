@@ -1,11 +1,13 @@
 <?php
 
-namespace ride\library\image;
+namespace ride\library\image\dimension;
+
+use ride\library\image\exception\ImageException;
 
 /**
  * Data container for a dimension
  */
-class Dimension {
+class GenericDimension implements Dimension {
 
     /**
      * Width of the dimension
