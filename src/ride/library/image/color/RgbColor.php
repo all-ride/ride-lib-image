@@ -7,7 +7,7 @@ use ride\library\image\exception\ImageException;
 /**
  * RGB color implementation
  */
-class RgbColor implements HtmlColor {
+class RgbColor extends AbstractColor {
 
     /**
      * Value for red
@@ -28,24 +28,18 @@ class RgbColor implements HtmlColor {
     protected $blue;
 
     /**
-     * Value for aplha channel
-     * @var integer
-     */
-    protected $alpha;
-
-    /**
      * Constructs a new color
      * @param integer $red Red value between 0 and 255
      * @param integer $green Green value between 0 and 255
      * @param integer $blue Blue value between 0 and 255
-     * @param integer $alpha Alpha value between 0 and 127
+     * @param integer $alpha Alpha value between 0 and 1
      * @return null
      */
-    public function __construct($red, $green, $blue, $alpha = 0) {
-        $this->red = $red;
-        $this->green = $green;
-        $this->blue = $blue;
-        $this->alpha = $alpha;
+    public function __construct($red, $green, $blue, $alpha = 1) {
+        $this->setRed($red);
+        $this->setGreen($green);
+        $this->setBlue($blue);
+        $this->setAlpha($alpha);
     }
 
     /**
@@ -61,24 +55,16 @@ class RgbColor implements HtmlColor {
     }
 
     /**
-     * Allocates the color to the provided image resource
-     * @param resource $resource Image resource
-     * @return integer Color identifier
-     * @throws ride\library\image\exception\ImageException when the color
-     * could not be allocated
+     * Sets the red value
+     * @param integer $red Value between 0 and 255
+     * @return null
      */
-    public function allocate($resource) {
-        if ($this->alpha) {
-            $id = imageColorAllocateAlpha($resource, $this->red, $this->green, $this->blue, $this->alpha);
-        } else {
-            $id = imageColorAllocate($resource, $this->red, $this->green, $this->blue);
+    public function setRed($red) {
+        if (!is_numeric($red) || $red < 0 || $red > 255) {
+            throw new ImageException('Could not set the red value: provided value is not between 0 and 255');
         }
 
-        if ($id === false) {
-            throw new ImageException('Could not allocate color ' . $this);
-        }
-
-        return $id;
+        $this->red = (integer) $red;
     }
 
     /**
@@ -90,6 +76,19 @@ class RgbColor implements HtmlColor {
     }
 
     /**
+     * Sets the green value
+     * @param integer $green Value between 0 and 255
+     * @return null
+     */
+    public function setGreen($green) {
+        if (!is_numeric($green) || $green < 0 || $green > 255) {
+            throw new ImageException('Could not set the green value: provided value is not between 0 and 255');
+        }
+
+        $this->green = (integer) $green;
+    }
+
+    /**
      * Gets the green value
      * @return integer Value between 0 and 255
      */
@@ -98,19 +97,24 @@ class RgbColor implements HtmlColor {
     }
 
     /**
+     * Sets the green value
+     * @param integer $green Value between 0 and 255
+     * @return null
+     */
+    public function setBlue($blue) {
+        if (!is_numeric($blue) || $blue < 0 || $blue > 255) {
+            throw new ImageException('Could not set the blue value: provided value is not between 0 and 255');
+        }
+
+        $this->blue = (integer) $blue;
+    }
+
+    /**
      * Gets the blue value
      * @return integer Value between 0 and 255
      */
     public function getBlue() {
         return $this->blue;
-    }
-
-    /**
-     * Gets the alpha channel value
-     * @return integer Value between 0 and 127
-     */
-    public function getAlpha() {
-        return $this->alpha;
     }
 
     /**

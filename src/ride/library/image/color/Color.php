@@ -14,12 +14,17 @@ interface Color {
     public function __toString();
 
     /**
-     * Allocates the color to the provided image resource
-     * @param resource $resource Image resource
-     * @return integer Color identifier
-     * @throws ride\library\image\exception\ImageException when the color
-     * could not be allocated
+     * Gets this color in HTML format
+     * @return string Color in HTML format (#FFFFFF)
      */
-    public function allocate($resource);
+    public function getHtmlColor();
+
+    /**
+     * Creates a color object from a HTML color code
+     * @param string $htmlColor HTML color code. Accepts the following formats:
+     * #AABBCC, AABBCC, #ABC and ABC
+     * @return HtmlColor
+     */
+    public static function createFromHtmlColor($htmlColor);
 
 }
