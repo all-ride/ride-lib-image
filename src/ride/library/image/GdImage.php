@@ -300,7 +300,7 @@ class GdImage extends AbstractImage implements DrawImage {
         }
 
         $result->resource = imageRotate($result->resource, $degrees, $uncoveredColor, $handleTransparancy);
-        $result->dimension = new Dimension(imagesX($result->resource), imagesY($result->resource));
+        $result->dimension = new GenericDimension(imagesX($result->resource), imagesY($result->resource));
 
         return $result;
     }
