@@ -87,6 +87,8 @@ class ImagickImage extends AbstractImage {
         $resource = $this->getResource();
         $resource->setImageFormat($format);
 
+        $file->getParent()->create();
+
         file_put_contents($file->getAbsolutePath(), $resource);
     }
 

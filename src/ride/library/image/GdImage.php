@@ -125,6 +125,8 @@ class GdImage extends AbstractImage implements DrawImage {
             throw new ImageException('Could not write ' . $file . ': file not writable');
         }
 
+        $file->getParent()->create();
+
         $format = $this->detectFormat($file, $format);
 
         switch ($format) {
