@@ -36,7 +36,7 @@ class GenericOptimizer implements Optimizer {
 
         switch ($extension) {
             case 'png':
-                $this->system->execute('pngcrush -rem alla -trail -blacken -reduce ' . $file . ' ' . $file);
+                $this->system->execute('pngcrush -nofilecheck -rem alla -bail -blacken -reduce -ow ' . $file);
                 $this->system->execute('optipng -o6 ' . $file);
 
                 break;
@@ -47,7 +47,7 @@ class GenericOptimizer implements Optimizer {
 
                 break;
             case 'gif':
-                $this->system->execute('gifsicle -O3 --carefull --no-warnings ' . $file);
+                $this->system->execute('gifsicle -O3 --careful --no-warnings ' . $file);
 
                 break;
         }
