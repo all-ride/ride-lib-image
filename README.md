@@ -8,5 +8,5 @@ Optional requirements are:
 - pngcrush
 - optipng
 - jpegoptim
-- jpegtran (libjpeg-turbo-progs)
+- jpegtran (libjpeg-turbo-progs or libjpeg-progs)
 - gifsicle
