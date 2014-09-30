@@ -36,18 +36,18 @@ class GenericOptimizer implements Optimizer {
 
         switch ($extension) {
             case 'png':
-                $this->system->execute('pngcrush -nofilecheck -rem alla -bail -blacken -reduce -ow ' . $file);
-                $this->system->execute('optipng -o6 ' . $file);
+                $this->executeCommand('pngcrush -nofilecheck -rem alla -bail -blacken -reduce -ow ' . $file);
+                $this->executeCommand('optipng -o6 ' . $file);
 
                 break;
             case 'jpg':
             case 'jpeg':
-                $this->system->execute('jpegoptim --quiet --strip-all --max=100 ' . $file);
-                $this->system->execute('jpegtran -optimize -copy none ' . $file);
+                $this->executeCommand('jpegoptim --quiet --strip-all --max=100 ' . $file);
+                $this->executeCommand('jpegtran -optimize -copy none ' . $file);
 
                 break;
             case 'gif':
-                $this->system->execute('gifsicle -O3 --careful --no-warnings ' . $file);
+                $this->executeCommand('gifsicle -O3 --careful --no-warnings ' . $file);
 
                 break;
         }
