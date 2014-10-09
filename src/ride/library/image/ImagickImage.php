@@ -157,8 +157,13 @@ class ImagickImage extends AbstractImage {
         }
 
         $result = clone $this;
-        $result->resource->cropImage($dimension->getWidth(), $dimension->getHeight(), $x, $y);
-        $result->resource->setImagePage(0, 0, 0, 0);
+
+        $result->resource = $result->resource->coalesceImages();
+        foreach ($result->resource as $frame) {
+            $frame->cropImage($dimension->getWidth(), $dimension->getHeight(), $x, $y);
+            $frame->setImagePage(0, 0, 0, 0);
+        }
+
         $result->dimension = $dimension;
 
         return $result;
@@ -174,7 +179,12 @@ class ImagickImage extends AbstractImage {
         $height = $dimension->getHeight();
 
         $result = clone $this;
-        $result->resource->resizeImage($dimension->getWidth(), $dimension->getHeight(), Imagick::FILTER_CATROM, 1);
+
+        $result->resource = $result->resource->coalesceImages();
+        foreach ($result->resource as $frame) {
+            $frame->resizeImage($dimension->getWidth(), $dimension->getHeight(), Imagick::FILTER_CATROM, 1);
+        }
+
         $result->dimension = $dimension;
 
         return $result;
