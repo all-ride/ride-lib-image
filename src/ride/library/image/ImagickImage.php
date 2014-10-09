@@ -158,6 +158,7 @@ class ImagickImage extends AbstractImage {
 
         $result = clone $this;
         $result->resource->cropImage($dimension->getWidth(), $dimension->getHeight(), $x, $y);
+        $result->resource->setImagePage(0, 0, 0, 0);
         $result->dimension = $dimension;
 
         return $result;

@@ -96,10 +96,10 @@ class GdImage extends AbstractImage implements DrawImage {
                 // handle transparency
                 $this->hasAlpha = false;
 
-                $transparentColor = imageColorTransparent($image);
+                $transparentColor = imageColorTransparent($this->resource);
                 if ($transparentColor == -1) {
-                    $transparentColorIndex = imageColorAllocate($image, 0, 0, 0);
-                    imageColorTransparent($image, $transparentColorIndex);
+                    $transparentColorIndex = imageColorAllocate($this->resource, 0, 0, 0);
+                    imageColorTransparent($this->resource, $transparentColorIndex);
                 }
 
                 break;
