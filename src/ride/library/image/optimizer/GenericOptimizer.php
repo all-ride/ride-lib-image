@@ -36,7 +36,7 @@ class GenericOptimizer implements Optimizer {
 
         switch ($extension) {
             case 'png':
-                $this->executeCommand('pngcrush -nofilecheck -rem alla -bail -blacken -reduce -ow ' . $file);
+                $this->executeCommand('pngcrush -nofilecheck -rem alla -bail -blacken -ow ' . $file);
                 $this->executeCommand('optipng -o6 ' . $file);
 
                 break;
