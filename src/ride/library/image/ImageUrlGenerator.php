@@ -16,10 +16,11 @@ interface ImageUrlGenerator {
     /**
      * Generates a URL for the provided image.
      * @param string|\ride\library\system\file\File $image Path or File instance to the image
-     * @param string $transformation Name of the transformation to use
-     * @param array $options Options for the transformation
+     * @param string|array $transformations Name of a transformation or an array
+     * with the name of the transformation as key and the options as value
+     * @param array $options Options for the transformation (when name provided)
      * @return null
      */
-    public function generateUrl($image, $transformation = null, array $options = null);
+    public function generateUrl($image, $transformations = null, array $options = null);
 
 }
