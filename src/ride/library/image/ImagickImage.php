@@ -57,6 +57,7 @@ class ImagickImage extends AbstractImage {
             case 'gif':
             case 'png':
             case 'jpeg':
+            case 'svg':
                 break;
             default:
                 throw new ImageException('Could not read ' . $file . ': format ' . $format . ' is not supported');
