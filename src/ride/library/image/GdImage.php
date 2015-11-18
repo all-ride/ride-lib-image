@@ -308,6 +308,30 @@ class GdImage extends AbstractImage implements DrawImage {
     }
 
     /**
+     * Flips this image into a new image
+     * @param string $mode Flip mode, this can be one of the constants:
+     * HORIZONTAL, VERTICAL, BOTH
+     * @return Image new instance with a resized version of this image
+     */
+    public function flip($mode) {
+        $resource = clone $this->getResource();
+        $result = clone $this;
+
+        $result->resource = $resource;
+
+        $modes = array(
+            self::MODE_HORIZONTAL => IMG_FLIP_HORIZONTAL,
+            self::MODE_VERTICAL => IMG_FLIP_VERTICAL,
+            self::MODE_BOTH => IMG_FLIP_BOTH,
+        );
+
+        imageflip($result->resource, $modes[$mode]);
+        // $result->dimension = new GenericDimension(imagesX($result->resource), imagesY($result->resource));
+
+        return $result;
+    }
+
+    /**
      * Sets whether this image uses a alpha channel for transparency
      * @param boolean $hasAlpha
      * @return null

@@ -13,6 +13,24 @@ use ride\library\system\file\File;
 interface Image {
 
     /**
+     * Name of the horizontal property
+     * @var string
+     */
+    const MODE_HORIZONTAL = 'horizontal';
+
+    /**
+     * Name of the vertical property
+     * @var string
+     */
+    const MODE_VERTICAL = 'vertical';
+
+    /**
+     * Name of the both property
+     * @var string
+     */
+    const MODE_BOTH = 'both';
+
+    /**
      * Reads the image from a file
      * @param \ride\library\system\file\File $file
      * @param string $format
@@ -77,6 +95,14 @@ interface Image {
      * @return Image new instance with a rotated version of this image
      */
     public function rotate($degrees, Color $uncoveredColor = null, $handleTransparancy = true);
+
+    /**
+     * Flips this image into a new image
+     * @param string $mode Flip mode, this can be one of the constants:
+     * HORIZONTAL, VERTICAL, BOTH
+     * @return Image new instance with a resized version of this image
+     */
+    public function flip($mode);
 
     /**
      * Gets the whether this image uses alpha channel transparency
