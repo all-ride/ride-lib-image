@@ -149,8 +149,6 @@ class GdImage extends AbstractImage implements DrawImage {
 
     /**
      * Create a new internal image resource with the given width and height
-     * @param integer width width of the new image resource
-     * @param integer height height of the new image resource
      * @return null
      */
     protected function createResource() {
@@ -309,24 +307,31 @@ class GdImage extends AbstractImage implements DrawImage {
 
     /**
      * Flips this image into a new image
-     * @param string $mode Flip mode, this can be one of the constants:
-     * HORIZONTAL, VERTICAL, BOTH
-     * @return Image new instance with a resized version of this image
+     * @param string $mode One of the MODE constants (MODE_HORIZONTAL,
+     * MODE_VERTICAL or MODE_BOTH)
+     * @return Image new instance with a flipped version of this image
      */
     public function flip($mode) {
-        $resource = clone $this->getResource();
-        $result = clone $this;
-
-        $result->resource = $resource;
-
         $modes = array(
             self::MODE_HORIZONTAL => IMG_FLIP_HORIZONTAL,
             self::MODE_VERTICAL => IMG_FLIP_VERTICAL,
             self::MODE_BOTH => IMG_FLIP_BOTH,
         );
 
+        if (!isset($modes[$mode])) {
+            throw new ImageException('Could not flip the image: invalid mode provided');
+        }
+
+        $dimension = $this->getDimension();
+        $width = $dimension->getWidth();
+        $height = $dimension->getHeight();
+
+        $result = new self();
+        $result->setDimension($dimension);
+        $result->copyTransparency($this);
+        $result->copyResource($this->getResource(), 0, 0, 0, 0, $width, $height, $width, $height);
+
         imageflip($result->resource, $modes[$mode]);
-        // $result->dimension = new GenericDimension(imagesX($result->resource), imagesY($result->resource));
 
         return $result;
     }
