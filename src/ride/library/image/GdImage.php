@@ -149,8 +149,6 @@ class GdImage extends AbstractImage implements DrawImage {
 
     /**
      * Create a new internal image resource with the given width and height
-     * @param integer width width of the new image resource
-     * @param integer height height of the new image resource
      * @return null
      */
     protected function createResource() {
@@ -175,6 +173,23 @@ class GdImage extends AbstractImage implements DrawImage {
         }
 
         imageFill($this->resource, 0, 0, $this->allocateColor($fillColor));
+    }
+
+    /**
+     * Clones the current image with resource
+     * @return Image
+     */
+    protected function cloneImage() {
+        $dimension = $this->getDimension();
+        $width = $dimension->getWidth();
+        $height = $dimension->getHeight();
+
+        $result = new self();
+        $result->setDimension($dimension);
+        $result->copyTransparency($this);
+        $result->copyResource($this->getResource(), 0, 0, 0, 0, $width, $height, $width, $height);
+
+        return $result;
     }
 
     /**
@@ -305,6 +320,61 @@ class GdImage extends AbstractImage implements DrawImage {
         $result->dimension = new GenericDimension(imagesX($result->resource), imagesY($result->resource));
 
         return $result;
+    }
+
+    /**
+     * Flips this image into a new image
+     * @param string $mode One of the MODE constants (MODE_HORIZONTAL,
+     * MODE_VERTICAL or MODE_BOTH)
+     * @return Image new instance with a flipped version of this image
+     */
+    public function flip($mode) {
+        $modes = array(
+            self::MODE_HORIZONTAL => IMG_FLIP_HORIZONTAL,
+            self::MODE_VERTICAL => IMG_FLIP_VERTICAL,
+            self::MODE_BOTH => IMG_FLIP_BOTH,
+        );
+
+        if (!isset($modes[$mode])) {
+            throw new ImageException('Could not flip the image: invalid mode provided');
+        }
+
+        $image = $this->cloneImage();
+
+        imageflip($image->resource, $modes[$mode]);
+
+        return $image;
+    }
+
+    /**
+     * Blurs this image
+     * @param integer $radius
+     * @return Image New instance with this blurred image
+     */
+    public function blur($radius = 10) {
+        $image = $this->cloneImage();
+
+        for ($i = 0; $i <= $radius; $i++) {
+            if (!imageFilter($image->resource, IMG_FILTER_GAUSSIAN_BLUR)) {
+                throw new ImageException('Could not blur the image');
+            }
+        }
+
+        return $image;
+    }
+
+    /**
+     * Converts this image to grayscale
+     * @return Image New instance with this image in grayscale
+     */
+    public function convertToGrayscale() {
+        $image = $this->cloneImage();
+
+        if (!imageFilter($image->resource, IMG_FILTER_GRAYSCALE)) {
+            throw new ImageException('Could not convert the image to grayscale');
+        }
+
+        return $image;
     }
 
     /**

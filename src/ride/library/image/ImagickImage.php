@@ -212,6 +212,63 @@ class ImagickImage extends AbstractImage {
     }
 
     /**
+     * Flips this image into a new image
+     * @param string $mode One of the MODE constants (MODE_HORIZONTAL,
+     * MODE_VERTICAL or MODE_BOTH)
+     * @return Image new instance with a flipped version of this image
+     */
+    public function flip($mode) {
+        $result = clone $this;
+        $result->resource = $result->resource->coalesceImages();
+
+        foreach ($result->resource as $frame) {
+            switch ($mode) {
+                case self::MODE_HORIZONTAL:
+                    $frame->flopImage();
+
+                    break;
+                case self::MODE_VERTICAL:
+                    $frame->flipImage();
+
+                    break;
+                case self::MODE_BOTH:
+                    $frame->flopImage();
+                    $frame->flipImage();
+
+                    break;
+                default:
+                    throw new ImageException('Could not flip the image: invalid mode provided');
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Blurs this image
+     * @param integer $radius
+     * @return Image New instance with this blurred image
+     */
+    public function blur($radius = 10) {
+        $image = clone $this;
+        $image->resource->gaussianBlurImage($radius, round($radius / 2));
+
+        return $image;
+    }
+
+    /**
+     * Converts this image to grayscale
+     * @return Image New instance with this image in grayscale
+     */
+    public function convertToGrayscale() {
+        $image = clone $this;
+        $image->resource->transformImageColorSpace(Imagick::COLORSPACE_GRAY);
+        // $image->resource->modulateImage(100,0,100);
+
+        return $image;
+    }
+
+    /**
      * Gets the whether this image uses alpha channel transparency
      * @return boolean
      */

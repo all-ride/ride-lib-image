@@ -13,6 +13,24 @@ use ride\library\system\file\File;
 interface Image {
 
     /**
+     * Name of the horizontal property
+     * @var string
+     */
+    const MODE_HORIZONTAL = 'horizontal';
+
+    /**
+     * Name of the vertical property
+     * @var string
+     */
+    const MODE_VERTICAL = 'vertical';
+
+    /**
+     * Name of the both property
+     * @var string
+     */
+    const MODE_BOTH = 'both';
+
+    /**
      * Reads the image from a file
      * @param \ride\library\system\file\File $file
      * @param string $format
@@ -77,6 +95,27 @@ interface Image {
      * @return Image new instance with a rotated version of this image
      */
     public function rotate($degrees, Color $uncoveredColor = null, $handleTransparancy = true);
+
+    /**
+     * Flips this image into a new image
+     * @param string $mode One of the MODE constants (MODE_HORIZONTAL,
+     * MODE_VERTICAL or MODE_BOTH)
+     * @return Image new instance with a flipped version of this image
+     */
+    public function flip($mode);
+
+    /**
+     * Blurs this image
+     * @param integer $radius
+     * @return Image New instance with blurred image
+     */
+    public function blur($radius = 10);
+
+    /**
+     * Converts this image to grayscale
+     * @return Image New instance with this image in grayscale
+     */
+    public function convertToGrayscale();
 
     /**
      * Gets the whether this image uses alpha channel transparency
