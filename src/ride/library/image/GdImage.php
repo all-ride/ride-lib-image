@@ -176,6 +176,23 @@ class GdImage extends AbstractImage implements DrawImage {
     }
 
     /**
+     * Clones the current image with resource
+     * @return Image
+     */
+    protected function cloneImage() {
+        $dimension = $this->getDimension();
+        $width = $dimension->getWidth();
+        $height = $dimension->getHeight();
+
+        $result = new self();
+        $result->setDimension($dimension);
+        $result->copyTransparency($this);
+        $result->copyResource($this->getResource(), 0, 0, 0, 0, $width, $height, $width, $height);
+
+        return $result;
+    }
+
+    /**
      * Gets the dimension of this image
      * @return \ride\library\image\dimension\Dimension
      */
@@ -322,18 +339,42 @@ class GdImage extends AbstractImage implements DrawImage {
             throw new ImageException('Could not flip the image: invalid mode provided');
         }
 
-        $dimension = $this->getDimension();
-        $width = $dimension->getWidth();
-        $height = $dimension->getHeight();
+        $image = $this->cloneImage();
 
-        $result = new self();
-        $result->setDimension($dimension);
-        $result->copyTransparency($this);
-        $result->copyResource($this->getResource(), 0, 0, 0, 0, $width, $height, $width, $height);
+        imageflip($image->resource, $modes[$mode]);
 
-        imageflip($result->resource, $modes[$mode]);
+        return $image;
+    }
 
-        return $result;
+    /**
+     * Blurs this image
+     * @param integer $radius
+     * @return Image New instance with this blurred image
+     */
+    public function blur($radius = 10) {
+        $image = $this->cloneImage();
+
+        for ($i = 0; $i <= $radius; $i++) {
+            if (!imageFilter($image->resource, IMG_FILTER_GAUSSIAN_BLUR)) {
+                throw new ImageException('Could not blur the image');
+            }
+        }
+
+        return $image;
+    }
+
+    /**
+     * Converts this image to grayscale
+     * @return Image New instance with this image in grayscale
+     */
+    public function convertToGrayscale() {
+        $image = $this->cloneImage();
+
+        if (!imageFilter($image->resource, IMG_FILTER_GRAYSCALE)) {
+            throw new ImageException('Could not convert the image to grayscale');
+        }
+
+        return $image;
     }
 
     /**

@@ -245,6 +245,30 @@ class ImagickImage extends AbstractImage {
     }
 
     /**
+     * Blurs this image
+     * @param integer $radius
+     * @return Image New instance with this blurred image
+     */
+    public function blur($radius = 10) {
+        $image = clone $this;
+        $image->resource->gaussianBlurImage($radius, round($radius / 2));
+
+        return $image;
+    }
+
+    /**
+     * Converts this image to grayscale
+     * @return Image New instance with this image in grayscale
+     */
+    public function convertToGrayscale() {
+        $image = clone $this;
+        $image->resource->transformImageColorSpace(Imagick::COLORSPACE_GRAY);
+        // $image->resource->modulateImage(100,0,100);
+
+        return $image;
+    }
+
+    /**
      * Gets the whether this image uses alpha channel transparency
      * @return boolean
      */

@@ -98,11 +98,24 @@ interface Image {
 
     /**
      * Flips this image into a new image
-     * @param string $mode Flip mode, this can be one of the constants:
-     * HORIZONTAL, VERTICAL, BOTH
-     * @return Image new instance with a resized version of this image
+     * @param string $mode One of the MODE constants (MODE_HORIZONTAL,
+     * MODE_VERTICAL or MODE_BOTH)
+     * @return Image new instance with a flipped version of this image
      */
     public function flip($mode);
+
+    /**
+     * Blurs this image
+     * @param integer $radius
+     * @return Image New instance with blurred image
+     */
+    public function blur($radius = 10);
+
+    /**
+     * Converts this image to grayscale
+     * @return Image New instance with this image in grayscale
+     */
+    public function convertToGrayscale();
 
     /**
      * Gets the whether this image uses alpha channel transparency
