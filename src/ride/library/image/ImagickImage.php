@@ -292,4 +292,18 @@ class ImagickImage extends AbstractImage {
         throw new ImageException('Could not get the transparent color: not implemented');
     }
 
+    /**
+     * Draws an image
+     * @param Point $leftTop Point of the upper left corner
+     * @param Image $image
+     * @return null
+     */
+    public function drawImage(Point $leftTop, Image $watermark) {
+        $image = clone $this;
+
+        $image->resource->compositeImage($watermark->getResource(), imagick::COMPOSITE_OVER, $leftTop->getX(), $leftTop->getY());
+
+        return $image;
+    }
+
 }
