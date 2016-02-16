@@ -10,3 +10,14 @@ Optional requirements are:
 - jpegoptim
 - jpegtran (libjpeg-turbo-progs or libjpeg-progs)
 - gifsicle
+
+
+## Transformations
+
+### Watermark
+
+Add a watermark to your image. This transformation requires following options:
+
+- x: Intager for the x coordinate
+- y: Intager for the y coordinate
+- watermark: A path to a public file
