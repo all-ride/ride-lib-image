@@ -298,12 +298,11 @@ class ImagickImage extends AbstractImage {
      * @param Image $image
      * @return null
      */
-    public function drawImage(Point $leftTop, Image $watermark) {
-        $image = clone $this;
+    public function drawImage(Point $leftTop, Image $image) {
+        $clone = clone $this;
+        $clone->resource->compositeImage($image->getResource(), imagick::COMPOSITE_OVER, $leftTop->getX(), $leftTop->getY());
 
-        $image->resource->compositeImage($watermark->getResource(), imagick::COMPOSITE_OVER, $leftTop->getX(), $leftTop->getY());
-
-        return $image;
+        return $clone;
     }
 
 }
