@@ -722,13 +722,13 @@ class GdImage extends AbstractImage implements DrawImage {
      * @return null
      */
     public function drawImage(Point $leftTop, Image $image) {
-        // $image = $this->cloneImage();
+        $clone = $this->cloneImage();
         $dimension = $image->getDimension();
 
         // Function at the bottom of this file.
-        imagecopymerge_alpha($this->getResource(), $image->getResource(), $leftTop->getX(), $leftTop->getY(), 0, 0, $dimension->getWidth(), $dimension->getHeight(), 100);
+        imagecopymerge_alpha($clone->getResource(), $image->getResource(), $leftTop->getX(), $leftTop->getY(), 0, 0, $dimension->getWidth(), $dimension->getHeight(), 100);
 
-        return $this;
+        return $clone;
     }
 
     /**
@@ -790,15 +790,14 @@ class GdImage extends AbstractImage implements DrawImage {
 }
 
 /**
-* PNG ALPHA CHANNEL SUPPORT for imagecopymerge();
-* by Sina Salek (http://br2.php.net/manual/en/function.imagecopymerge.php#92787)
-*
-* Bugfix by Ralph Voigt (bug which causes it
-* to work only for $src_x = $src_y = 0.
-* Also, inverting opacity is not necessary.)
-* 08-JAN-2011
-*
-**/
+ * PNG ALPHA CHANNEL SUPPORT for imagecopymerge();
+ * by Sina Salek (http://br2.php.net/manual/en/function.imagecopymerge.php#92787)
+ *
+ * Bugfix by Ralph Voigt (bug which causes it
+ * to work only for $src_x = $src_y = 0.
+ * Also, inverting opacity is not necessary.)
+ * 08-JAN-2011
+ **/
 function imagecopymerge_alpha($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $pct){
     // creating a cut resource
     $cut = imagecreatetruecolor($src_w, $src_h);

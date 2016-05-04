@@ -2,16 +2,22 @@
 
 namespace ride\library\image\transformation;
 
-use ride\library\system\file\browser\FileBrowser;
-use ride\library\image\Image;
-use ride\library\image\ImageFactory;
 use ride\library\image\point\GenericPoint;
+use ride\library\image\ImageFactory;
+use ride\library\image\Image;
+use ride\library\system\file\browser\FileBrowser;
 
 /**
- * Transformation to blur an image
+ * Transformation to add a watermark to an image
  */
 class WatermarkTransformation implements Transformation {
 
+    /**
+     * Constructs a new transformation
+     * @param \ride\library\system\file\browser\FileBrowser $fileBrowser
+     * @param \ride\library\image\ImageFactory $imageFactory
+     * @return null
+     */
     public function __construct(FileBrowser $fileBrowser, ImageFactory $imageFactory) {
         $this->fileBrowser = $fileBrowser;
         $this->imageFactory = $imageFactory;
@@ -27,15 +33,23 @@ class WatermarkTransformation implements Transformation {
     public function transform(Image $image, array $options) {
         $x = array_key_exists('x', $options) ? $options['x'] : 0;
         $y = array_key_exists('y', $options) ? $options['y'] : 0;
-        $watermarkPath = array_key_exists('watermark', $options) ? $options['watermark'] : 0;
 
-        $file = $this->fileBrowser->getPublicFile($watermarkPath);
-        if (!$file) {
+        $path = array_key_exists('watermark', $options) ? $options['watermark'] : 0;
+        if (!$path) {
             return $image;
+        }
+
+        $file = $this->fileBrowser->getFile($path);
+        if (!$file) {
+            $file = $this->fileBrowser->getPublicFile($path);
+            if (!$file) {
+                return $image;
+            }
         }
 
         $watermark = $this->imageFactory->createImage();
         $watermark->read($file);
+
         $topLeft = new GenericPoint($x, $y);
 
         return $image->drawImage($topLeft, $watermark);

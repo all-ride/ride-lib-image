@@ -2,7 +2,7 @@
     "name": "ride/lib-image",
     "description": "Image processing library of the Ride framework",
     "license": "MIT",
-    "version": "0.9.1",
+    "version": "0.10.0",
     "authors": [
         {
             "name": "Joris Vandeweerd",
