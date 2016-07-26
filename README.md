@@ -41,7 +41,57 @@ A generic implementation is provided through _GenericDimension_.
 
 The _Transformation_ interface offers a way to apply batch image manipulations.
 
-There are implementations available for crop, resize, flip, blur, grayscale and chain manipulations.
+There are implementations available for crop, resize, flip, blur, grayscale, watermark and chain manipulations.
+
+### Blur
+
+Blurs your image. 
+
+This transformation has following options:
+
+- radius: optional and defaults to 10
+
+### Crop
+
+Crops your image by resizing it first to an optimal dimension. 
+
+This transformation requires the following options:
+
+- width: width to crop to in pixels
+- height: height to crop to in pixels
+
+### Flip
+
+Flips your image over the X-axis and/or the Y-axis.
+
+This transformation requires the following options:
+
+- mode: can be horizontal, vertical or both.
+
+### Grayscale
+
+Converts your image to a grayscaled image.
+
+This transformations has no options.
+
+### Resize
+
+Resizes your image to fit a maximum width and/or height.
+
+This transformation requires one of the following options:
+
+- width: maximum width of the resulting image
+- height: maximum height of the resulting image
+
+### Watermark
+
+Adds a watermark to your image. 
+
+This transformation has the following options:
+
+- x: Point on the X-axis, defaults to 0
+- y: Point on the Y-axis, defaults to 0 
+- watermark: relative path to the watermark image
 
 ## Optimizer
 
