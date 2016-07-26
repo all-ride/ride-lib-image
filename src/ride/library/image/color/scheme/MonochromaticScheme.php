@@ -17,26 +17,40 @@ class MonochromaticScheme implements Scheme {
      * @return array Array with Color objects
      */
     public function getColors(Color $baseColor, $number) {
+        $colors = array(
+            $baseColor,
+        );
+
         if (!$baseColor instanceof HslColor) {
             $baseColor = $baseColor->getHslColor();
+            $isRgb = true;
+        } else {
+            $isRgb = false;
         }
-
-        $colors = array(
-        	$baseColor,
-        );
 
         $hue = $baseColor->getHue();
         $saturation = $baseColor->getSaturation();
         $lightness = $baseColor->getLightness();
+        $alpha = $baseColor->getAlpha();
 
         $calculateLightShade = false;
         $factor = 0.4 / $number;
 
         for ($i = 1; $i < $number; $i++) {
             if ($calculateLightShade) {
-                $colors[] = new HslColor($hue, min(1, $saturation + ($i * $factor)), min(1, $lightness + ($i * $factor)));
+                $color = new HslColor($hue, min(1, $saturation + ($i * $factor)), min(1, $lightness + ($i * $factor)), $alpha);
             } else {
-                $colors[] = new HslColor($hue, max(0, $saturation - ($i * $factor)), max(0, $lightness - ($i * $factor)));
+                $color = new HslColor($hue, max(0, $saturation - ($i * $factor)), max(0, $lightness - ($i * $factor)), $alpha);
+            }
+
+            if ($isRgb) {
+                $color = $color->getRgbColor();
+            }
+
+            if ($calculateLightShade) {
+                $colors[] = $color;
+            } else {
+                array_unshift($colors, $color);
             }
 
             $calculateLightShade = !$calculateLightShade;

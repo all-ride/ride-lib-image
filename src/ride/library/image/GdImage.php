@@ -218,15 +218,17 @@ class GdImage extends AbstractImage implements DrawImage {
 
         $this->dimension = $dimension;
 
-        if ($this->resource) {
-            $oldResource = $this->resource;
-
-            $oldWidth = $oldDimension->getWidth();
-            $oldHeight = $oldDimension->getHeight();
-
-            $this->createResource();
-            $this->copyResource($oldResource, 0, 0, 0, 0, $oldWidth, $oldHeight, $oldWidth, $oldHeight);
+        if (!$this->resource) {
+            return;
         }
+
+        $oldResource = $this->resource;
+
+        $oldWidth = $oldDimension->getWidth();
+        $oldHeight = $oldDimension->getHeight();
+
+        $this->createResource();
+        $this->copyResource($oldResource, 0, 0, 0, 0, $oldWidth, $oldHeight, $oldWidth, $oldHeight);
     }
 
     /**
@@ -244,6 +246,8 @@ class GdImage extends AbstractImage implements DrawImage {
             $y = $start->getY();
         }
 
+        $width = $dimension->getWidth();
+        $height = $dimension->getHeight();
         $imageWidth = $this->getDimension()->getWidth();
         $imageHeight = $this->getDimension()->getHeight();
 
@@ -253,23 +257,16 @@ class GdImage extends AbstractImage implements DrawImage {
         if ($y > $imageHeight) {
             throw new ImageException('Y exceeds the image height');
         }
-
-        $width = $dimension->getWidth();
-        $height = $dimension->getHeight();
-
-        $result = new self();
-        $result->setDimension($dimension);
-        $result->copyTransparency($this);
-
         if ($x + $width > $imageWidth) {
             throw new ImageException('X + width exceed the image width');
         }
         if ($y + $height > $imageHeight) {
-            var_export($dimension);
-            var_export($start);
             throw new ImageException('Y + height exceed the image height');
         }
 
+        $result = new self();
+        $result->setDimension($dimension);
+        $result->copyTransparency($this);
         $result->copyResource($this->getResource(), 0, 0, $x, $y, $width, $height, $width, $height);
 
         return $result;
@@ -287,7 +284,6 @@ class GdImage extends AbstractImage implements DrawImage {
         $result = new self();
         $result->setDimension($dimension);
         $result->copyTransparency($this);
-
         $result->copyResource($this->getResource(), 0, 0, 0, 0, $width, $height, $this->dimension->getWidth(), $this->dimension->getHeight());
 
         return $result;
@@ -308,14 +304,13 @@ class GdImage extends AbstractImage implements DrawImage {
 
         $uncoveredColor = $this->allocateColor($uncoveredColor);
 
-        $result = clone $this;
-
         if ($handleTransparancy === true) {
             $ignoreTransparancy = 0;
         } else {
             $ignoreTransparancy = true;
         }
 
+        $result = clone $this;
         $result->resource = imageRotate($result->resource, $degrees, $uncoveredColor, $handleTransparancy);
         $result->dimension = new GenericDimension(imagesX($result->resource), imagesY($result->resource));
 
@@ -446,11 +441,13 @@ class GdImage extends AbstractImage implements DrawImage {
     protected function copyTransparency(Image $image) {
         if ($image->hasAlphaTransparency()) {
             $this->setHasAlphaTransparency(true);
-        } else {
-            $color = $image->getTransparentColor();
-            if ($color) {
-                $this->setTransparentColor($color);
-            }
+
+            return;
+        }
+
+        $color = $image->getTransparentColor();
+        if ($color) {
+            $this->setTransparentColor($color);
         }
     }
 
@@ -618,7 +615,6 @@ class GdImage extends AbstractImage implements DrawImage {
         $innerWidth = $width - $cornerWidth;
         $innerHeight = $height - $cornerWidth;
 
-
         // left top
         imageFilledArc($resource, $x + $radius, $y + $radius, $cornerWidth, $cornerWidth, 180, 270, $color, IMG_ARC_PIE);
 
@@ -704,15 +700,15 @@ class GdImage extends AbstractImage implements DrawImage {
      * @return null
      */
     public function drawText(Point $leftTop, $text, Color $color, $font = null, $size = null, $angle = 0) {
-        if ($font === null) {
-            $font = 2;
-        }
-
         if ($size === null) {
             $size = 11;
         }
 
-        imagettftext($this->getResource(), $size, $angle, $leftBottom->getX(), $leftBottom->getY(), $this->allocateColor($color), $font, $text);
+        if ($font) {
+            imagettftext($this->getResource(), $size, $angle, $leftTop->getX(), $leftTop->getY(), $this->allocateColor($color), $font, $text);
+        } else {
+            imagestring($this->getResource(), 2, $leftTop->getX(), $leftTop->getY(), $text, $this->allocateColor($color));
+        }
     }
 
     /**

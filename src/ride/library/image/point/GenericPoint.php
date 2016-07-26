@@ -28,8 +28,11 @@ class GenericPoint implements Point {
      * @return null
      */
     public function __construct($x, $y) {
-        $this->setX($x);
-        $this->setY($y);
+        $this->validateValue($x, 'X');
+        $this->validateValue($y, 'Y');
+
+        $this->x = $x;
+        $this->y = $y;
     }
 
     /**
@@ -37,20 +40,21 @@ class GenericPoint implements Point {
      * @return string
      */
     public function __toString() {
-        return '(' . $this->x . ', ' . $this->y . ')';
+        return '[' . $this->x . ',' . $this->y . ']';
     }
 
     /**
      * Sets the value on the X-axis
      * @param integer $x
-     * @return null
+     * @return GenericPoint New instance with adjusted X value
      */
     public function setX($x) {
-        if (!is_numeric($x)) {
-            throw new ImageException('Could not set X coordinate of point: not a numeric value provided');
-        }
+        $this->validateValue($x, 'X');
 
-        $this->x = $x;
+        $point = clone $this;
+        $point->x = $x;
+
+        return $point;
     }
 
     /**
@@ -64,14 +68,15 @@ class GenericPoint implements Point {
     /**
      * Sets the value on the Y-axis
      * @param integer $y
-     * @return null
+     * @return GenericPoint New instance  with adjusted Y value
      */
     public function setY($y) {
-        if (!is_numeric($y)) {
-            throw new ImageException('Could not set Y coordinate of point: not a numeric value provided');
-        }
+        $this->validateValue($y, 'Y');
 
-        $this->y = $y;
+        $point = clone $this;
+        $point->y = $y;
+
+        return $point;
     }
 
     /**
@@ -80,6 +85,19 @@ class GenericPoint implements Point {
      */
     public function getY() {
         return $this->y;
+    }
+
+    /**
+     * Validates a coordinate value
+     * @param mixed $value Value to validate
+     * @param string $name Name of the variable
+     * @return null
+     * @throws ride\library\image\exception\ImageException when the value is invalid
+     */
+    private function validateValue($value, $name) {
+        if (!is_numeric($value)) {
+            throw new ImageException('Could not set ' . $name . ' coordinate of point: not a numeric value provided');
+        }
     }
 
 }

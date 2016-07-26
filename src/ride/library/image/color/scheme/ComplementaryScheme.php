@@ -18,20 +18,28 @@ class ComplementaryScheme implements Scheme {
      */
     public function getColors(Color $baseColor, $number) {
         if (!$baseColor instanceof HslColor) {
-            $baseColor = $baseColor->getHslColor();
-        }
-
-        $hue = $baseColor->getHue();
-        $saturation = $baseColor->getSaturation();
-        $lightness = $baseColor->getLightness();
-
-        $complementColor = clone($baseColor);
-        if ($hue > 0.5) {
-            $complementHue = $hue - 0.5;
+            $hslBaseColor = $baseColor->getHslColor();
+            $isRgb = true;
         } else {
-            $complementHue = $hue + 0.5;
+            $hslBaseColor = $baseColor;
+            $isRgb = false;
         }
-        $complementColor->setHue($complementHue);
+
+        $hue = $hslBaseColor->getHue();
+        $saturation = $hslBaseColor->getSaturation();
+        $lightness = $hslBaseColor->getLightness();
+        $alpha = $hslBaseColor->getAlpha();
+
+        if ($hue > 0.5) {
+            $complementHue = $hue - 180;
+        } else {
+            $complementHue = $hue + 180;
+        }
+
+        $complementColor = $hslBaseColor->setHue($complementHue);
+        if ($isRgb) {
+            $complementColor = $complementColor->getRgbColor();
+        }
 
         $colors = array(
         	$complementColor,
@@ -47,15 +55,21 @@ class ComplementaryScheme implements Scheme {
         $number--;
         for ($i = 1; $i < $number; $i++) {
             if ($calculateComplementShade) {
-                array_unshift($colors, new HslColor($hue, min(1, $saturation + ($i * $factor)), min(1, $lightness + ($i * $factor))));
+                $color = new HslColor($hue, min(1, $saturation + ($i * $factor)), min(1, $lightness + ($i * $factor)), $alpha);
             } else {
-                array_unshift($colors, new HslColor($hue, max(0, $saturation - ($i * $factor)), max(0, $lightness - ($i * $factor))));
+                $color = new HslColor($hue, max(0, $saturation - ($i * $factor)), max(0, $lightness - ($i * $factor)), $alpha);
             }
+
+            if ($isRgb) {
+                $color = $color->getRgbColor();
+            }
+
+            $colors[] = $color;
 
             $calculateComplementShade = !$calculateComplementShade;
         }
 
-        array_unshift($colors, $baseColor);
+        $colors[] = $baseColor;
 
         return $colors;
     }
