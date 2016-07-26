@@ -2,7 +2,6 @@
 
 namespace ride\library\image\transformation;
 
-use ride\library\image\point\GenericPoint;
 use ride\library\image\ImageFactory;
 use ride\library\image\Image;
 use ride\library\system\file\browser\FileBrowser;
@@ -34,7 +33,7 @@ class WatermarkTransformation implements Transformation {
         $x = array_key_exists('x', $options) ? $options['x'] : 0;
         $y = array_key_exists('y', $options) ? $options['y'] : 0;
 
-        $path = array_key_exists('watermark', $options) ? $options['watermark'] : 0;
+        $path = array_key_exists('watermark', $options) ? $options['watermark'] : null;
         if (!$path) {
             return $image;
         }
@@ -50,7 +49,7 @@ class WatermarkTransformation implements Transformation {
         $watermark = $this->imageFactory->createImage();
         $watermark->read($file);
 
-        $topLeft = new GenericPoint($x, $y);
+        $topLeft = $this->imageFactory->createPoint($x, $y);
 
         return $image->drawImage($topLeft, $watermark);
     }

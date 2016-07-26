@@ -29,17 +29,22 @@ class HslColor extends AbstractColor {
 
     /**
      * Constructs a new color
-     * @param float $hue Hue value between 0 and 1
+     * @param float $hue Hue value between 0 and 360
      * @param float $saturation Saturation value between 0 and 1
      * @param float $lightness Hue value between 0 and 1
-     * @param integer $alpha Alpha value between 0 and 1
+     * @param float $alpha Alpha value between 0 and 1
      * @return null
      */
     public function __construct($hue, $saturation, $lightness, $alpha = 1) {
-        $this->setHue($hue);
-        $this->setSaturation($saturation);
-        $this->setLightness($lightness);
-        $this->setAlpha($alpha);
+        $this->validateValue($hue, 'hue');
+        $this->validatePercentValue($saturation, 'saturation');
+        $this->validatePercentValue($lightness, 'lightness');
+
+        $this->hue = $hue;
+        $this->saturation = $saturation;
+        $this->lightness = $lightness;
+
+        parent::__construct($alpha);
     }
 
     /**
@@ -47,24 +52,25 @@ class HslColor extends AbstractColor {
      * @return string
      */
     public function __toString() {
-        if (!$this->alpha) {
-            return 'HSL(' . $this->hue . ', ' . $this->saturation . ', ' . $this->lightness . ')';
+        if ($this->alpha === 1) {
+            return 'HSL(' . $this->hue . ',' . $this->saturation . ',' . $this->lightness . ')';
         } else {
-            return 'HSLA(' . $this->hue . ', ' . $this->saturation . ', ' . $this->lightness . ', ' . $this->alpha . ')';
+            return 'HSLA(' . $this->hue . ',' . $this->saturation . ',' . $this->lightness . ',' . $this->alpha . ')';
         }
     }
 
     /**
      * Sets the hue value
-     * @param float $hue Value between 0 and 1
-     * @return null
+     * @param float $hue Value between 0 and 360
+     * @return HslImage New instance with adjusted hue value
      */
     public function setHue($hue) {
-        if (!is_numeric($hue) || $hue < 0 || $hue > 1) {
-            throw new ImageException('Could not set the hue value: provided value is not between 0 and 1');
-        }
+        $this->validateValue($hue, 'hue');
 
-        $this->hue = $hue;
+        $color = clone $this;
+        $color->hue = $hue;
+
+        return $color;
     }
 
     /**
@@ -78,14 +84,15 @@ class HslColor extends AbstractColor {
     /**
      * Sets the saturation value
      * @param float $saturation Value between 0 and 1
-     * @return null
+     * @return HslImage New instance with adjusted saturation value
      */
     public function setSaturation($saturation) {
-        if (!is_numeric($saturation) || $saturation < 0 || $saturation > 1) {
-            throw new ImageException('Could not set the saturation value: provided value is not between 0 and 1');
-        }
+        $this->validatePercentValue($saturation, 'saturation');
 
-        $this->saturation = $saturation;
+        $color = clone $this;
+        $color->saturation = $saturation;
+
+        return $color;
     }
 
     /**
@@ -99,14 +106,15 @@ class HslColor extends AbstractColor {
     /**
      * Sets the lightness value
      * @param float $lightness Value between 0 and 1
-     * @return null
+     * @return HslImage New instance with adjusted lightness value
      */
     public function setLightness($lightness) {
-        if (!is_numeric($lightness) || $lightness < 0 || $lightness > 1) {
-            throw new ImageException('Could not set the lightness value: provided value is not between 0 and 1');
-        }
+        $this->validatePercentValue($lightness, 'lightness');
 
-        $this->lightness = $lightness;
+        $color = clone $this;
+        $color->lightness = $lightness;
+
+        return $color;
     }
 
     /**
@@ -124,20 +132,22 @@ class HslColor extends AbstractColor {
     public function getRgbColor() {
         if ($this->saturation == 0) {
             $red = $this->lightness * 255;
-            $green = $this->lightness * 255;
-            $blue = $this->lightness * 255;
+            $green = $red;
+            $blue = $red;
         } else {
-            $tmp1 = 2 * $this->lightness - $tmp2;
             if ($this->lightness < 0.5) {
                 $tmp2 = $this->lightness * (1 + $this->saturation);
             } else {
                 $tmp2 = ($this->lightness + $this->saturation) - ($this->saturation * $this->lightness);
-            };
+            }
+            $tmp1 = 2 * $this->lightness - $tmp2;
 
-            $red = 255 * $this->hueToRgb($tmp1, $tmp2, $this->hue + (1 / 3));
-            $green = 255 * $this->hueToRgb($tmp1, $tmp2, $this->hue);
-            $blue = 255 * $this->hueToRgb($tmp1, $tmp2, $this->hue - (1 / 3));
-        };
+            $hue = $this->hue / 360;
+
+            $red = 255 * $this->hueToRgb($tmp1, $tmp2, $hue + (1 / 3));
+            $green = 255 * $this->hueToRgb($tmp1, $tmp2, $hue);
+            $blue = 255 * $this->hueToRgb($tmp1, $tmp2, $hue - (1 / 3));
+        }
 
         return new RgbColor($red, $green, $blue, $this->alpha);
     }
@@ -149,28 +159,28 @@ class HslColor extends AbstractColor {
      * @param float $hue
      * @return number|unknown
      */
-    protected function hueToRgb($value1, $value2, $hue) {
+    private function hueToRgb($value1, $value2, $hue) {
         if ($hue < 0) {
             $hue += 1;
-        };
+        }
 
         if ($hue > 1) {
             $hue -= 1;
-        };
+        }
 
         if ((6 * $hue) < 1) {
             return ($value1 + ($value2 - $value1) * 6 * $hue);
-        };
+        }
 
         if ((2 * $hue) < 1) {
-            return ($value2);
-        };
+            return $value2;
+        }
 
         if ((3 * $hue) < 2) {
             return ($value1 + ($value2 - $value1) * ((2 / 3 - $hue) * 6));
-        };
+        }
 
-        return ($value1);
+        return $value1;
     }
 
     /**
@@ -179,6 +189,19 @@ class HslColor extends AbstractColor {
      */
     public function getHtmlColor() {
         return $this->getRgbColor()->getHtmlColor();
+    }
+
+    /**
+     * Validates a hue value
+     * @param mixed $value Value to validate
+     * @param string $name Name of the variable
+     * @return null
+     * @throws ride\library\image\exception\ImageException when the value is invalid
+     */
+    private function validateValue($value, $name) {
+        if (!is_numeric($value) || $value < 0 || $value > 360) {
+            throw new ImageException('Could not set ' . $name . ' value: provided value is not between 0 and 360');
+        }
     }
 
     /**

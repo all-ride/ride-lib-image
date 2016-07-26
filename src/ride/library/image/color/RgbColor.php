@@ -32,14 +32,19 @@ class RgbColor extends AbstractColor {
      * @param integer $red Red value between 0 and 255
      * @param integer $green Green value between 0 and 255
      * @param integer $blue Blue value between 0 and 255
-     * @param integer $alpha Alpha value between 0 and 1
+     * @param float $alpha Alpha value between 0 and 1
      * @return null
      */
     public function __construct($red, $green, $blue, $alpha = 1) {
-        $this->setRed($red);
-        $this->setGreen($green);
-        $this->setBlue($blue);
-        $this->setAlpha($alpha);
+        $this->validateValue($red, 'red');
+        $this->validateValue($green, 'green');
+        $this->validateValue($blue, 'blue');
+
+        $this->red = (integer) $red;
+        $this->green = (integer) $green;
+        $this->blue = (integer) $blue;
+
+        parent::__construct($alpha);
     }
 
     /**
@@ -47,24 +52,25 @@ class RgbColor extends AbstractColor {
      * @return string
      */
     public function __toString() {
-        if (!$this->alpha) {
-            return 'RGB(' . $this->red . ', ' . $this->green . ', ' . $this->blue . ')';
+        if ($this->alpha === 1) {
+            return 'RGB(' . $this->red . ',' . $this->green . ',' . $this->blue . ')';
         } else {
-            return 'RGBA(' . $this->red . ', ' . $this->green . ', ' . $this->blue . ', ' . $this->alpha . ')';
+            return 'RGBA(' . $this->red . ',' . $this->green . ',' . $this->blue . ',' . $this->alpha . ')';
         }
     }
 
     /**
      * Sets the red value
      * @param integer $red Value between 0 and 255
-     * @return null
+     * @return RgbColor New instance with the adjusted red value
      */
     public function setRed($red) {
-        if (!is_numeric($red) || $red < 0 || $red > 255) {
-            throw new ImageException('Could not set the red value: provided value is not between 0 and 255');
-        }
+        $this->validateValue($red, 'red');
 
-        $this->red = (integer) $red;
+        $color = clone $this;
+        $color->red = $red;
+
+        return $color;
     }
 
     /**
@@ -78,14 +84,15 @@ class RgbColor extends AbstractColor {
     /**
      * Sets the green value
      * @param integer $green Value between 0 and 255
-     * @return null
+     * @return RgbColor New instance with the adjusted green value
      */
     public function setGreen($green) {
-        if (!is_numeric($green) || $green < 0 || $green > 255) {
-            throw new ImageException('Could not set the green value: provided value is not between 0 and 255');
-        }
+        $this->validateValue($green, 'green');
 
-        $this->green = (integer) $green;
+        $color = clone $this;
+        $color->green = $green;
+
+        return $color;
     }
 
     /**
@@ -97,16 +104,17 @@ class RgbColor extends AbstractColor {
     }
 
     /**
-     * Sets the green value
-     * @param integer $green Value between 0 and 255
-     * @return null
+     * Sets the blue value
+     * @param integer $blue Value between 0 and 255
+     * @return RgbColor New instance with the adjusted blue value
      */
     public function setBlue($blue) {
-        if (!is_numeric($blue) || $blue < 0 || $blue > 255) {
-            throw new ImageException('Could not set the blue value: provided value is not between 0 and 255');
-        }
+        $this->validateValue($blue, 'blue');
 
-        $this->blue = (integer) $blue;
+        $color = clone $this;
+        $color->blue = $blue;
+
+        return $color;
     }
 
     /**
@@ -119,10 +127,10 @@ class RgbColor extends AbstractColor {
 
     /**
      * Gets the brightness value of this color
-     * @return integer Value between 0 and 500
+     * @return float Value between 0 and 1
      */
     public function getBrightness() {
-        return (($this->red * 299) + ($this->green * 587) + ($this->blue * 114)) / 1000;
+        return (($this->red * 299) + ($this->green * 587) + ($this->blue * 114)) / 255000;
     }
 
     /**
@@ -130,7 +138,7 @@ class RgbColor extends AbstractColor {
      * @return boolean True when the color is dark, false for a light color
      */
     public function isDark() {
-        return $this->getBrightness() < 125;
+        return $this->getBrightness() < 0.25;
     }
 
     /**
@@ -139,8 +147,11 @@ class RgbColor extends AbstractColor {
      * @return Color New color instance with the luminance adjusted
      */
     public function luminate($factor) {
-        $color = clone $this;
+        if (!is_numeric($factor) || $factor < -1 || $factor > 1) {
+            throw new ImageException('Could not luminate color: provided factor should be a number between -1 and 1');
+        }
 
+        $color = clone $this;
         $color->red = round(min(max(0, $color->red + ($color->red * $factor)), 255));
         $color->green = round(min(max(0, $color->green + ($color->green * $factor)), 255));
         $color->blue = round(min(max(0, $color->blue + ($color->blue * $factor)), 255));
@@ -160,13 +171,13 @@ class RgbColor extends AbstractColor {
         $max = max($red, $green, $blue);
         $min = min($red, $green, $blue);
 
-        $hue;
-        $saturation;
+        $hue = 0;
+        $saturation = 0;
         $lightness = ($max + $min) / 2;
         $d = $max - $min;
 
         if ($d == 0) {
-            return new HslColor(0, 0, $lightness, $this->alpha);
+            return new HslColor($hue, $saturation, $lightness, $this->alpha);
         }
 
         $saturation = $d / ( 1 - abs( 2 * $lightness - 1 ) );
@@ -182,7 +193,7 @@ class RgbColor extends AbstractColor {
     	    $hue = 60 * (($red - $green) / $d + 4);
         }
 
-        return new HslColor(round($hue / 360, 2), round($saturation, 2), round($lightness, 2), $this->alpha);
+        return new HslColor($hue, $saturation, $lightness, $this->alpha);
     }
 
     /**
@@ -195,6 +206,19 @@ class RgbColor extends AbstractColor {
         $blue = str_pad(dechex($this->blue), 2, '0', STR_PAD_LEFT);
 
         return strtoupper('#' . $red . $green . $blue);
+    }
+
+    /**
+     * Validates a color value
+     * @param mixed $value Value to validate
+     * @param string $name Name of the variable
+     * @return null
+     * @throws ride\library\image\exception\ImageException when the value is invalid
+     */
+    private function validateValue($value, $name) {
+        if (!is_numeric($value) || $value < 0 || $value > 255) {
+            throw new ImageException('Could not set the ' . $name . ' value: provided value is not between 0 and 255');
+        }
     }
 
     /**

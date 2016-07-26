@@ -3,6 +3,7 @@
 namespace ride\library\image\transformation;
 
 use ride\library\image\dimension\GenericDimension;
+use ride\library\image\exception\ImageException;
 use ride\library\image\point\GenericPoint;
 use ride\library\image\Image;
 
