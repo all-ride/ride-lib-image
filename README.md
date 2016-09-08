@@ -4,7 +4,9 @@ Image processing library of the PHP Ride framework.
 
 You need GD or Imagick on your server to use this library.
 
-## Image
+## What's In This Library
+
+### Image
 
 The _Image_ interface is the base of this library.
 
@@ -17,13 +19,13 @@ The _DrawImage_ interface extends from _Image_ and adds methods to draw points, 
 
 Implementations are available for GD and Imagick.
 
-## ImageFactory
+### ImageFactory
 
 The _ImageFactory_ interface offers a generic way to create the instances needed to work with images.
 
 A generic implementation is provided through _GenericImageFactory_.
 
-## Point
+### Point
 
 The _Point_ interface is to define a coordinate on an X-Y axis.
 It's used for image manipulations.
@@ -31,19 +33,19 @@ A point can go positive or negative on an axis.
 
 A generic implementation is provided through _GenericPoint_.
 
-## Dimansion
+### Dimansion
 
 The _Dimension_ interface defines a dimension of an image or manipulation.
 
 A generic implementation is provided through _GenericDimension_.
 
-## Transformation
+### Transformation
 
 The _Transformation_ interface offers a way to apply batch image manipulations.
 
 There are implementations available for crop, resize, flip, blur, grayscale, watermark and chain manipulations.
 
-### Blur
+#### Blur
 
 Blurs your image. 
 
@@ -51,7 +53,7 @@ This transformation has following options:
 
 - radius: optional and defaults to 10
 
-### Crop
+#### Crop
 
 Crops your image by resizing it first to an optimal dimension. 
 
@@ -60,7 +62,7 @@ This transformation requires the following options:
 - width: width to crop to in pixels
 - height: height to crop to in pixels
 
-### Flip
+#### Flip
 
 Flips your image over the X-axis and/or the Y-axis.
 
@@ -68,13 +70,13 @@ This transformation requires the following options:
 
 - mode: can be horizontal, vertical or both.
 
-### Grayscale
+#### Grayscale
 
 Converts your image to a grayscaled image.
 
 This transformations has no options.
 
-### Resize
+#### Resize
 
 Resizes your image to fit a maximum width and/or height.
 
@@ -83,7 +85,7 @@ This transformation requires one of the following options:
 - width: maximum width of the resulting image
 - height: maximum height of the resulting image
 
-### Watermark
+#### Watermark
 
 Adds a watermark to your image. 
 
@@ -93,14 +95,14 @@ This transformation has the following options:
 - y: Point on the Y-axis, defaults to 0 
 - watermark: relative path to the watermark image
 
-## Optimizer
+### Optimizer
 
 The _Optimizer_ interface can be used to implement optimalizations on image files.
 It's intented to optimize the file sizes but can be used for other purposes as well.
 
 A generic implementation is provided through _GenericOptimizer_.
 
-### GenericOptimizer
+#### GenericOptimizer
 
 The generic image optimizer uses the following binaries on your system:
 - pngcrush
@@ -111,13 +113,17 @@ The generic image optimizer uses the following binaries on your system:
 
 _Note: Unexistant binaries are ignored._
 
-## Color
+#### NullOptimizer
+
+No optimization is perform by this optimizer.
+
+### Color
 
 The _Color_ interface offers an easy way to work with colors.
 
 The interface is currently implemented for the RGB and the HSL color model.
 
-## ColorSchem
+### ColorSchem
 
 The _ColorScheme_ interface is to generate a number of colors for a specified base color.
 
@@ -174,3 +180,17 @@ function foo(File $file) {
     $image->write($file);
 }
 ```
+
+### Implementations
+
+For more examples, you can check the following implementations of this library:
+- [ride/web-image](https://github.com/all-ride/ride-web-image)
+
+## Installation
+
+You can use [Composer](http://getcomposer.org) to install this library.
+
+```
+composer require ride/lib-image
+```
+
