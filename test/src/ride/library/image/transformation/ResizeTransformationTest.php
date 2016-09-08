@@ -15,7 +15,8 @@ class ResizeTransformationTest extends PHPUnit_Framework_TestCase {
     public function testTransform($dimension, $width, $height) {
         $options = array('width' => $width, 'height' => $height);
 
-        $image = $this->getMock(Image::class);
+        $image = $this->getMockBuilder('ride\\library\\image\\Image')
+                      ->getMock();
         $image->expects($this->once())
               ->method('getDimension')
               ->will($this->returnValue(new GenericDimension(800, 600)));

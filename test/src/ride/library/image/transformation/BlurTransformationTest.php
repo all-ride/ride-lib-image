@@ -12,7 +12,8 @@ class BlurTransformationTest extends PHPUnit_Framework_TestCase {
         $radius = 15;
         $options = array('radius' => $radius);
 
-        $image = $this->getMock(Image::class);
+        $image = $this->getMockBuilder('ride\\library\\image\\Image')
+                      ->getMock();
         $image->expects($this->once())
               ->method('blur')
               ->with($this->equalTo($radius))
