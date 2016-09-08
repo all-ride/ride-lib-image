@@ -12,7 +12,8 @@ class ChainTransformationTest extends PHPUnit_Framework_TestCase {
         $radius = 15;
         $blurOptions = array('radius' => $radius);
 
-        $image = $this->getMock(Image::class);
+        $image = $this->getMockBuilder('ride\\library\\image\\Image')
+                      ->getMock();
         $image->expects($this->once())
               ->method('blur')
               ->with($this->equalTo($radius))
@@ -20,7 +21,6 @@ class ChainTransformationTest extends PHPUnit_Framework_TestCase {
         $image->expects($this->once())
               ->method('convertToGrayscale')
               ->will($this->returnValue($image));
-
 
         $blurTransformation = new BlurTransformation();
         $grayscaleTransformation = new GrayscaleTransformation();

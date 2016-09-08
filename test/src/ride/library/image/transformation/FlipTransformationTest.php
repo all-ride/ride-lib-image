@@ -12,7 +12,8 @@ class FlipTransformationTest extends PHPUnit_Framework_TestCase {
         $mode = Image::MODE_HORIZONTAL;
         $options = array('mode' => $mode);
 
-        $image = $this->getMock(Image::class);
+        $image = $this->getMockBuilder('ride\\library\\image\\Image')
+                      ->getMock();
         $image->expects($this->once())
               ->method('flip')
               ->with($this->equalTo($mode))

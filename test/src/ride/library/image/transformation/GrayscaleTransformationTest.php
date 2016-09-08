@@ -9,7 +9,8 @@ use \PHPUnit_Framework_TestCase;
 class GrayscaleTransformationTest extends PHPUnit_Framework_TestCase {
 
     public function testTransform() {
-        $image = $this->getMock(Image::class);
+        $image = $this->getMockBuilder('ride\\library\\image\\Image')
+                      ->getMock();
         $image->expects($this->once())
               ->method('convertToGrayscale')
               ->will($this->returnValue($image));

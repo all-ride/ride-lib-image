@@ -15,5 +15,10 @@
         "psr-0": {
             "ride\\library\\image\\": ["src/"]
         }
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "ride\\library\\image\\": ["test/src/"]
+        }
     }
 }
