@@ -115,7 +115,7 @@ _Note: Unexistant binaries are ignored._
 
 #### NullOptimizer
 
-No optimization is perform by this optimizer.
+No optimization is performed by this optimizer.
 
 ### Color
 
@@ -123,7 +123,7 @@ The _Color_ interface offers an easy way to work with colors.
 
 The interface is currently implemented for the RGB and the HSL color model.
 
-### ColorSchem
+### ColorScheme
 
 The _ColorScheme_ interface is to generate a number of colors for a specified base color.
 
@@ -183,7 +183,7 @@ function foo(File $file) {
 
 ### Implementations
 
-For more examples, you can check the following implementations of this library:
+For more examples, you can check the following implementation of this library:
 - [ride/web-image](https://github.com/all-ride/ride-web-image)
 
 ## Installation
