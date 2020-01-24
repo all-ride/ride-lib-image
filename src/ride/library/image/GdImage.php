@@ -67,7 +67,7 @@ class GdImage extends AbstractImage implements DrawImage {
         switch ($format) {
             case 'png':
                 // read image resource
-                $this->resource = imageCreateFromPng($file->getAbsolutePath());
+                $this->resource = @imageCreateFromPng($file->getAbsolutePath());
                 if ($this->resource === false) {
                     throw new ImageException('Could not read ' . $file . ': not a valid PNG image');
                 }
@@ -78,7 +78,7 @@ class GdImage extends AbstractImage implements DrawImage {
                 break;
             case 'jpeg':
                 // read image resource
-                $this->resource = imageCreateFromJpeg($file->getAbsolutePath());
+                $this->resource = @imageCreateFromJpeg($file->getAbsolutePath());
                 if ($this->resource === false) {
                     throw new ImageException('Could not read ' . $file . ': not a valid JPG image');
                 }
@@ -88,7 +88,7 @@ class GdImage extends AbstractImage implements DrawImage {
                 break;
             case 'gif':
                 // read image resource
-                $this->resource = imageCreateFromGif($file->getAbsolutePath());
+                $this->resource = @imageCreateFromGif($file->getAbsolutePath());
                 if ($this->resource === false) {
                     throw new ImageException('Could not read ' . $file . ': not a valid GIF image');
                 }
